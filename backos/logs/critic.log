@@ -78,3 +78,17 @@
 {"level":"info","ts":"2024-04-28T17:21:44.603+0800","caller":"backos/main.go:48","msg":"Shutdown Server ..."}
 {"level":"info","ts":"2024-04-28T17:21:44.603+0800","caller":"backos/main.go:48","msg":"Destroy BigCache ..."}
 {"level":"info","ts":"2024-04-28T17:21:44.604+0800","caller":"backos/main.go:48","msg":"Server exiting"}
+{"level":"info","ts":"2024-04-28T17:27:09.249+0800","caller":"backos/main.go:43","msg":"server start"}
+{"level":"info","ts":"2024-04-28T17:27:09.249+0800","caller":"backos/main.go:43","msg":"Start Listening and serving HTTP on :10001"}
+{"level":"error","ts":"2024-04-28T17:28:20.778+0800","caller":"service/accountFunctions.go:61","msg":"Error 1146 (42S02): Table 'peixun.account' doesn't exist"}
+{"level":"error","ts":"2024-04-28T17:28:20.778+0800","caller":"service/banService.go:39","msg":"redigo: nil returned"}
+{"level":"error","ts":"2024-04-28T17:28:33.131+0800","caller":"accounts/entrypoint.go:26","msg":"验证码不存在或已失效"}
+{"level":"error","ts":"2024-04-28T17:28:52.541+0800","caller":"service/accountFunctions.go:61","msg":"Error 1146 (42S02): Table 'peixun.account' doesn't exist"}
+{"level":"info","ts":"2024-04-29T09:34:36.018+0800","caller":"backos/main.go:49","msg":"Shutdown Server ..."}
+{"level":"info","ts":"2024-04-29T09:34:36.019+0800","caller":"backos/main.go:49","msg":"Destroy BigCache ..."}
+{"level":"info","ts":"2024-04-29T09:34:36.020+0800","caller":"backos/main.go:49","msg":"Server exiting"}
+{"level":"info","ts":"2024-04-29T09:35:06.544+0800","caller":"backos/main.go:43","msg":"server start"}
+{"level":"info","ts":"2024-04-29T09:35:06.544+0800","caller":"backos/main.go:43","msg":"Start Listening and serving HTTP on :10001"}
+{"level":"info","ts":"2024-04-29T09:35:12.777+0800","caller":"backos/main.go:49","msg":"Shutdown Server ..."}
+{"level":"info","ts":"2024-04-29T09:35:12.778+0800","caller":"backos/main.go:49","msg":"Destroy BigCache ..."}
+{"level":"info","ts":"2024-04-29T09:35:12.778+0800","caller":"backos/main.go:49","msg":"Server exiting"}

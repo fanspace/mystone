@@ -3,7 +3,6 @@ package controller
 import (
 	"backos/apps/accounts"
 	"backos/apps/accounts/model"
-	"backos/apps/accounts/service"
 	log "backos/logger"
 	"backos/relations"
 	"backos/utils"
@@ -65,7 +64,7 @@ func GenPin(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "msg": relations.CUS_ERR_4002, "success": false})
 		return
 	}
-	sncode, pin, err := service.GeneratePinCode(uname)
+	sncode, pin, err := accounts.GeneratePinCode(uname)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": false, "msg": err.Error()})
 		return

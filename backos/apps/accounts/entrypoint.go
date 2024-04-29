@@ -25,3 +25,14 @@ func DoLogin(req *model.AccountLoginReq) (*model.AccountLoginRes, error) {
 	req.Password = string(sDec)
 	return service.Login(req)
 }
+
+// GeneratePinCode /*
+// @title    GeneratePinCode
+// @description   generate pin code
+// @auth      Lf             时间（2024/4/26 15:19）
+// @param     req        string         ""
+// @return    sncode, pin, err         string, string, error              ""
+
+func GeneratePinCode(username string) (string, string, error) {
+	return service.GeneratePinCode(username)
+}

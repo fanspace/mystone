@@ -23,7 +23,7 @@ type Account struct {
 	UserType int32 `json:"usertype" xorm:"unique(mobile_type) not null default 0 INT(8)"`
 	Status   int32 `json:"status" xorm:"not null default 0 TINYINT(3)"`
 	//
-	Domaim    string `json:"Domain" xorm:"VARCHAR(32)"`
+	Domain    string `json:"Domain" xorm:"VARCHAR(32)"`
 	Mobile    string `json:"mobile" xorm:"unique(mobile_type) not null VARCHAR(12)"`
 	Email     string `json:"email" xorm:"VARCHAR(255)"`
 	CreatedBy int64  `json:"created_by" xorm:"BIGINT(20)"`
