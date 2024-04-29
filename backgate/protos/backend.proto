@@ -1,0 +1,11 @@
+syntax = "proto3";
+package training;
+import "commonForm.proto";
+import "accountForm.proto";
+
+
+//  --------------------------    方法定义  -----------------------------
+service BackendGrpc {
+  // 登录
+  rpc HandleAccountLogin(AccountLoginReq) returns (AccountLoginRes) {}
+}

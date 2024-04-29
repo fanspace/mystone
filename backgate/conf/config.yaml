@@ -1,0 +1,53 @@
+AppName: "BackOs"
+ReleaseMode: false
+Smark: ""
+DbName: "mysql"
+Database:
+  MysqlSettings:
+    DriverName: "mysql"
+    Url: "root:123456@tcp(192.168.0.95:3306)/peixun?charset=utf8mb4"
+    MaxIdleConns: 100
+    MaxOpenConns: 1500
+    QueryTimeout: 30
+  DamengSettings:
+    DriverName: "dm"
+    Url: "dm://PEIXUN:abc123456@DMRW?schema=PEIXUN"
+  RedisSettings:
+    Addr: "192.168.0.95:6379"
+    DB: 6
+    Password: "123456"
+    PoolSize: 20
+    MaxIdle: 3
+    MaxActive: 0
+    IdleTimeout: 60
+CorsSettings:
+  Allows:
+    - "*"
+LogSettings:
+  EnableConsole: true
+  ConsoleLevel: "DEBUG"
+  ConsoleJson: true
+  EnableFile: true
+  FileLevel: "DEBUG"
+  FileJson: true
+  FileLocation: "./logs"
+ServiceSettings:
+  ListenAddress: ":10001"
+  ReadTimeout: 300
+  WriteTimeout: 300
+RabbitMqSettings:
+  Url: "192.168.0.95"
+  Port: 5672
+  User: "admin"
+  Pwd: "admin"
+MinioSettings:
+  KeyID: "admin"
+  AccessKey: "12345678"
+  PublicBucket: "zjpub"
+  PrivateBucket: "zjpri"
+  EndPoint: "192.168.0.95:9000"
+  EntryPoint: "192.168.0.95:9000"
+ThirdPartySettings:
+  AuthUrl: "http://192.168.0.36:7602/oauth"
+  CreUrl: "http://192.168.0.36:7600/crev"
+  CreToken: "AHHDICB4BDZOJPtLCAnTSFsOLPlM"
