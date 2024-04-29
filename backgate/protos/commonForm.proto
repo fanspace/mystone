@@ -1,5 +1,5 @@
 syntax = "proto3";
-package enlist;
+package training;
 
 message CommonResponse{
   bool success = 1; //失败：0;成功：1

@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	log "backos/logger"
-	"backos/utils"
+	log "backgate/logger"
+	"backgate/utils"
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
 	"net/http"

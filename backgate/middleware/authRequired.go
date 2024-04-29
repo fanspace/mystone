@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"backos/commons"
-	"backos/settings"
-	"backos/utils"
+	"backgate/service"
+	"backgate/settings"
+	"backgate/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
@@ -28,7 +28,7 @@ func MustLogin() gin.HandlerFunc {
 				c.Abort()
 				return
 			} else {
-				isBaned := commons.IsUserBaned(mc.Username)
+				isBaned := service.IsUserBaned(mc.Username)
 				fitType := validUserTypeAndLoginType(logintype, mc.UserType)
 				if isBaned {
 					c.Set("mc", new(utils.MyClaim))

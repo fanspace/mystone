@@ -2,6 +2,7 @@ package settings
 
 type Config struct {
 	ReleaseMode     bool
+	DaprMode        bool
 	Smark           string
 	AppName         string
 	DbName          string

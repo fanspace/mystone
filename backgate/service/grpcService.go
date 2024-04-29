@@ -4,9 +4,13 @@ import (
 	log "backgate/logger"
 	"backgate/relations"
 	"backgate/settings"
+	pb "backgate/training"
+	"context"
 	"errors"
 	"fmt"
 	"google.golang.org/grpc"
+	"reflect"
+	"time"
 )
 
 /**
@@ -44,24 +48,57 @@ func InitGrpcs() {
 }
 
 func GetGrpcPool(grpcname string) (*grpc.ClientConn, error) {
-	/*var conn *grpc.ClientConn
-	if !settings.Cfg.DaprMode {
-		conn = GrpcPools[grpcname]
-	} else {
-		conn = GrpcPools["daprrpc"]
-	}
-	*/
-	if settings.Cfg.DaprMode {
-		grpcname = "daprrpc"
-	}
+	conn := GrpcPools[grpcname]
+	if conn == nil || conn.GetState().String() != "READY" {
+		if settings.Cfg.DaprMode {
+			grpcname = "daprrpc"
+		}
+		if addr, ok := settings.Cfg.GrpcSettings[grpcname]; ok {
+			return dialgrpc(addr)
+		} else {
+			return nil, errors.New(relations.CUS_ERR_4007)
+		}
 
-	//if conn == nil {
-	if addr, ok := settings.Cfg.GrpcSettings[grpcname]; ok {
-		return dialgrpc(addr)
-	} else {
-		return nil, errors.New(relations.CUS_ERR_4004)
 	}
+	return conn, nil
+}
+func DealGrpcCall[T any](req T, methodName string, grpcName string) (any, error) {
+	var res []reflect.Value
+	pool, err := GetGrpcPool(grpcName)
+	if err != nil {
+		log.Error(err.Error())
+		return nil, err
+	}
+	//defer pool.Close()
+	if pool == nil {
+		log.Error(fmt.Sprintf("connect to %s failed", grpcName))
+		return nil, errors.New(relations.CUS_ERR_4007)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
 
-	//}
-	//return conn, nil
+	var c any
+	switch grpcName {
+	case "backendrpc":
+		c = pb.NewBackendGrpcClient(pool)
+
+	default:
+		return nil, errors.New(relations.CUS_ERR_4002)
+	}
+	value := reflect.ValueOf(c)
+	f := value.MethodByName(methodName)
+	var parms []reflect.Value
+	parms = []reflect.Value{reflect.ValueOf(ctx), reflect.ValueOf(req)}
+	res = f.Call(parms)
+	if len(res) != 2 {
+		return nil, errors.New(relations.CUS_ERR_4007)
+	}
+	if res[1].Interface() != nil {
+		err = res[1].Interface().(error)
+		return nil, err
+	}
+	if res[0].Interface() != nil {
+		return res[0].Interface(), nil
+	}
+	return nil, err
 }

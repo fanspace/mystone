@@ -1,0 +1,35 @@
+UserType:
+  INACT: 0      #inactive account
+  NORMAL: 1         # foreground
+  COMPANY: 11        #单位
+  CHARGE: 1001          #   charge  admin
+  MANAGER: 10001       # manager
+  ROOT: 100001           # root admin
+UserStatus:
+  INACT: 1
+  NORMAL: 2
+  BAND: -1
+RegStep:                            #信息填写完成情况
+  INFO: 2
+  EDU: 4
+  JOB: 8
+  FILES: 16
+IdType:                 #证件类型
+  IDCARD: 1    #身份证
+  PASSPORT: 2    # 护照
+  TAIWAN: 3     #台胞证
+  MILITARY: 4    # 军官证
+NumVal:          #一些数值类型的定义
+  MAX_LOGIN_ERR_TIMES: 5        #允许最大密码输入错误次数
+  LOGIN_ERR_REFRESH_TIME: 20    # 密码输入重试间隔时间，此处为分钟
+  PIN_CODE_INVALID_MINUTE: 5   #// 验证码失效时间 分钟  //非手机验证码
+  MAX_LOGIN_ERR_IP_MINUTE: 2     # 允许同一ip几分钟内连续错误  此处在redis中设置
+  MAX_LOGIN_ERR_IP_TIMES: 20     # 允许几分钟内，最大错误数
+UploadProps:
+  MAX_UPLOAD_FILE_SIZE: 10     #允许最大上传文件为10M
+  MAX_UPLOAD_FILE_AMOUNT: 5    #  允许最大同时上传数量
+  BASE_FTP_PATH: "ws/zj"     # 本项目Ftp根目录
+  BASE_WWW_PATH: "http://192.168.0.38/files/"           #本项目资源前端显示目录
+WhiteIps:
+  - "127.0.0.1"
+

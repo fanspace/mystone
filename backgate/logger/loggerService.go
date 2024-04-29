@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"backos/settings"
+	"backgate/settings"
 	"strings"
 )
 

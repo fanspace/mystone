@@ -1,14 +1,15 @@
 package rbac
 
 import (
-	log "backos/logger"
-	"backos/relations"
-	"backos/settings"
+	log "backgate/logger"
+	"backgate/relations"
+	"backgate/settings"
 	"encoding/json"
 	"fmt"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/xorm-adapter/v2"
 	"github.com/go-redis/redis/v8"
+	_ "github.com/go-sql-driver/mysql"
 	"os"
 	"strings"
 	"time"
@@ -21,12 +22,14 @@ var (
 func InitCasbin() {
 	a, err := xormadapter.NewAdapter("mysql", settings.Cfg.Database.MysqlSettings.Url, true)
 	if err != nil {
+		fmt.Println("Casbin init error")
 		log.Error(err.Error())
 		os.Exit(1)
 	}
 	Casbin, err = casbin.NewEnforcer("conf/authz_model.conf", a)
 	if err != nil {
 		log.Error(err.Error())
+		fmt.Println("Casbin init error")
 		os.Exit(1)
 	}
 	if !settings.Cfg.ReleaseMode {

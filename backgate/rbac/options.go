@@ -1,7 +1,7 @@
 package rbac
 
 import (
-	"backos/relations"
+	"backgate/relations"
 	"fmt"
 	rds "github.com/go-redis/redis/v8"
 	"github.com/google/uuid"

@@ -1,10 +1,10 @@
 package rabbitmq
 
 import (
-	"backos/commons"
-	log "backos/logger"
-	"backos/relations"
-	"backos/settings"
+	log "backgate/logger"
+	"backgate/relations"
+	service "backgate/service"
+	"backgate/settings"
 	"encoding/json"
 	"fmt"
 )
@@ -36,13 +36,13 @@ func (t *RecvProImp) Consumer(dataByte []byte) error {
 	}
 	if rmsg.Type == "userStat" {
 		if rmsg.Act == "ban" {
-			err = commons.BanUserCache(rmsg.Username)
+			err = service.BanUserCache(rmsg.Username)
 			if err != nil {
 				log.Error(err.Error())
 				return nil
 			}
 		} else {
-			err = commons.ReleaseUserCache(rmsg.Username)
+			err = service.ReleaseUserCache(rmsg.Username)
 			if err != nil {
 				log.Error(err.Error())
 				return nil
@@ -50,13 +50,13 @@ func (t *RecvProImp) Consumer(dataByte []byte) error {
 		}
 	} else if rmsg.Type == "ipStat" {
 		if rmsg.Act == "ban" {
-			err = commons.BanIpCache(rmsg.Username)
+			err = service.BanIpCache(rmsg.Username)
 			if err != nil {
 				log.Error(err.Error())
 				return nil
 			}
 		} else {
-			err = commons.ReleaseIpCache(rmsg.Username)
+			err = service.ReleaseIpCache(rmsg.Username)
 			if err != nil {
 				log.Error(err.Error())
 				return nil

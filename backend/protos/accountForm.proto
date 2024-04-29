@@ -1,0 +1,29 @@
+syntax = "proto3";
+package training;
+
+message AccountLoginReq {
+  // 用户名
+  string  Username = 1;
+  // 密码
+  string  Password = 2;
+  // 验证码
+  string  Pin  = 3;
+  // ip地址，网关端获取
+  string  Ip   = 4;
+  //登录设备  DEVICE_PC = 1/DEVICE_H5 = 2/DEVICE_WX = 3/DEVICE_WXPRO = 4
+  int32  Device = 5;
+  // 学习前端train，或管理前端 backend
+  string      Domain   = 6;
+  // user type  考生：fore    单位用户   com     系统管理用户: back
+  string   LoginType   = 7;
+  // 校验码 （系统生成的随机校验码，获取验证码时由系统分配，提交表单时回传）
+  string   Sncode      = 8;
+}
+
+
+message AccountLoginRes {
+  // jwt
+  string Tokens = 1;
+  // user Id
+  int64  Usid =  2;
+}
