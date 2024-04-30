@@ -1,5 +1,0 @@
-{"level":"info","ts":"2024-04-29T16:12:13.901+0800","caller":"backgate/main.go:25","msg":"server start"}
-{"level":"info","ts":"2024-04-29T16:12:13.902+0800","caller":"backgate/main.go:25","msg":"Start Listening and serving HTTP on :10001"}
-{"level":"info","ts":"2024-04-29T16:15:31.955+0800","caller":"backgate/main.go:31","msg":"Shutdown Server ..."}
-{"level":"info","ts":"2024-04-29T16:15:31.955+0800","caller":"backgate/main.go:31","msg":"Destroy BigCache ..."}
-{"level":"info","ts":"2024-04-29T16:15:31.956+0800","caller":"backgate/main.go:31","msg":"Server exiting"}
