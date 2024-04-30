@@ -2,10 +2,16 @@ syntax = "proto3";
 package training;
 import "commonForm.proto";
 import "accountForm.proto";
-
+import  "menuForm.proto";
 
 //  --------------------------    方法定义  -----------------------------
 service BackendGrpc {
+  //----------------  account -------------------------
   // 登录
   rpc HandleAccountLogin(AccountLoginReq) returns (AccountLoginRes) {}
+  //----------------  menu -------------------------
+  // 获得所有的菜单
+  rpc QueryAllMenus(MenuQueryReq) returns (MenuListRes) {}
+  // 获得单个菜单
+  rpc FetchMenu(MenuQueryReq) returns (MenuRes) {}
 }

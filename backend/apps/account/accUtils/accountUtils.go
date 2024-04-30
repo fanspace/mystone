@@ -124,6 +124,6 @@ func GenAccountPwd(password string, passwordhash string, usertype int32) string 
 	m := hmac.New(sha256.New, key)
 	m.Write(pwd)
 	signature := strings.ToUpper(hex.EncodeToString(m.Sum(nil)))
-	//fmt.Println(signature)
+	fmt.Println(signature)
 	return signature
 }

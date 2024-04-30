@@ -2,6 +2,7 @@ package apps
 
 import (
 	accsrv "backend/apps/account/service"
+	"backend/apps/res/service"
 	"context"
 	"fmt"
 )
@@ -29,4 +30,14 @@ func (ags BackendGrpcService) HandleAccountLogin(ctx context.Context, in *pb.Acc
 			"Auditor"},
 	}
 	return res, nil
+}
+
+// 获得所有的菜单
+func (ags BackendGrpcService) QueryAllMenus(ctx context.Context, in *pb.MenuQueryReq) (*pb.MenuListRes, error) {
+	return service.QueryAllMenus(in)
+}
+
+// 获得单个菜单
+func (ags BackendGrpcService) FetchMenu(ctx context.Context, in *pb.MenuQueryReq) (*pb.MenuRes, error) {
+	return service.FetchMenu(in)
 }

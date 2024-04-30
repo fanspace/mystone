@@ -8,6 +8,7 @@ require (
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang/protobuf v1.5.4
 	github.com/gomodule/redigo v1.9.2
+	github.com/jinzhu/copier v0.4.0
 	github.com/spf13/viper v1.18.2
 	github.com/streadway/amqp v1.1.0
 	go.uber.org/zap v1.27.0

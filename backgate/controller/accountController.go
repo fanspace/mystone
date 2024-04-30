@@ -50,7 +50,7 @@ func Login(c *gin.Context) {
 		"code":    relations.WEB_STATUS_BACK,
 		"success": true,
 		"data":    res,
-		"message": "",
+		"msg":     "",
 	})
 	return
 }

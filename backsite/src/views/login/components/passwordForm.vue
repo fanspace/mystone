@@ -136,6 +136,7 @@ import SIdentify from './sidentify'
 				}else{
 					this.islogin = false
 					this.$message.warning(user.msg)
+					this.refreshCode()
 					return false
 				}
 				//获取菜单
