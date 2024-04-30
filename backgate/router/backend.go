@@ -1,7 +1,13 @@
 package router
 
-import "github.com/gin-gonic/gin"
+import (
+	"backgate/controller"
+	"backgate/relations"
+	"github.com/gin-gonic/gin"
+)
 
-func initBackendRouter(r *gin.Engine) {
-
+func initBackendRouter(router *gin.Engine) {
+	prefix := relations.APISITE_PREFIX
+	router.POST(prefix+"/login", controller.Login)
+	router.GET(prefix+"/pin/:username", controller.GenPin)
 }

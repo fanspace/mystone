@@ -54,3 +54,31 @@ func Login(c *gin.Context) {
 	})
 	return
 }
+
+// @Summary 生成验证码
+// @Description 需要用户名
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Param username path string true "get pin code"
+// @Success 200 {object} gin.H
+// @Router /pin/{username} [get]
+func GenPin(c *gin.Context) {
+	uname := c.Param("username")
+	if uname == "" {
+		c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "msg": relations.CUS_ERR_4002, "success": false})
+		return
+	}
+	sncode, pin, err := service.GeneratePinCode(uname)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": false, "msg": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code":    relations.WEB_STATUS_BACK,
+		"success": true,
+		"sncode":  sncode,
+		"pin":     pin,
+	})
+	return
+}

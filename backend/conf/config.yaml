@@ -33,7 +33,7 @@ LogSettings:
   FileJson: true
   FileLocation: "./logs"
 ServiceSettings:
-  ListenAddress: ":10001"
+  ListenAddress: ":10011"
   ReadTimeout: 300
   WriteTimeout: 300
 GrpcSettings:

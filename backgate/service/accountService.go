@@ -18,5 +18,9 @@ func DoLogin(req *pb.AccountLoginReq) (*pb.AccountLoginRes, error) {
 		return nil, err
 	}
 	res, err := DealGrpcCall(req, "HandleAccountLogin", "backendrpc")
+	if err != nil {
+		log.Error(err.Error())
+		return nil, err
+	}
 	return res.(*pb.AccountLoginRes), err
 }

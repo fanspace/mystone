@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"backos/settings"
+	"backend/settings"
 	"strings"
 )
 

@@ -1,8 +1,8 @@
 package db
 
 import (
-	log "backos/logger"
-	"backos/settings"
+	log "backend/logger"
+	"backend/settings"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gomodule/redigo/redis"
 	"os"

@@ -3,6 +3,7 @@ module backend
 go 1.21.1
 
 require (
+	github.com/allegro/bigcache/v2 v2.2.5
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang/protobuf v1.5.4
