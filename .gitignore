@@ -26,3 +26,4 @@ conf/secrets.yaml
 .idea
 >>>>>>> f78895dd91ba95e908c63b926d5ff43b105d72a8
 training/
+logs/
