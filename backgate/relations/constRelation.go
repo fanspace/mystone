@@ -15,10 +15,12 @@ const (
 	JWT_SECRET_STRING_PROD_MAN = "bwe34saf63a593f70de7f3338581c2dd"
 	WEB_STATUS_BACK            = 20000 // equlas http  code 200
 
-	DEVICE_PC    = 1
-	DEVICE_H5    = 2
-	DEVICE_WX    = 3
-	DEVICE_WXPRO = 4
+	DEVICE_PC          = 1
+	DEVICE_H5          = 2
+	DEVICE_WX          = 3
+	DEVICE_WXPRO       = 4
+	DEVICE_ANDROID_APP = 5
+	DEVICE_IOS_APP     = 6
 
 	WX_SENCE_QRCODE_URL = "https://mp.weixin.qq.com/cgi-bin/showqrcode"
 	ZERO                = 0

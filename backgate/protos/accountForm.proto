@@ -23,7 +23,17 @@ message AccountLoginReq {
 
 message AccountLoginRes {
   // jwt
-  string Tokens = 1;
+  string Token = 1;
   // user Id
-  int64  Usid =  2;
+  UserInfo  UserInfo =  2;
+}
+
+
+message UserInfo {
+  int64   UserId   = 1;
+  string    Username  = 2;
+  string  Showname    = 3;
+  string  Dashboard  = 4;
+  repeated  string  Roles = 5;
+  string Avatar  = 6;
 }

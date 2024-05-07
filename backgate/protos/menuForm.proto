@@ -1,7 +1,8 @@
 syntax = "proto3";
 package training;
+import "commonForm.proto";
 message MenuQueryReq {
-  //类型 所有：0  某个pid;   1   某个group : 2 (需要grpname)
+  //类型 所有：0   某个pid:1   某个group : 2 (需要grpname)
   int32 Type = 1;
   // 组名
   string GroupName = 2;
@@ -33,14 +34,94 @@ message MenuRes {
   string    Group    = 16;
   int32      Version       = 17;
 }
+
 //MenuMata
 message MenuMata {
   string      Title    = 1;
   string      Icon     = 2;
   bool        NoCache  = 3;
+  string      Type = 4;
 }
 
 message MenuListRes {
   repeated  MenuRes  Menus = 1;
   int64      Total        = 2;
+}
+
+
+message ResourceRes {
+  int64       Id    = 1;
+  string      Name     = 2;
+  string      Url      = 3;
+  string      Act        = 4;
+  int64       Pid         = 5;
+  bool        IsLeaf        = 6;
+  string      Domain      = 7;
+  string      Remark      = 8;
+  repeated  ResourceRes   children = 9;
+  string     Group        = 10;
+  int32      Level         = 11;
+  int32      Version       = 12;
+}
+
+
+message ResourceListRes {
+  repeated   ResourceRes   Resources = 1;
+  int64      Total        = 2;
+}
+
+message ResourceReq {
+  Action Action = 1;
+  ResourceRes  Resource = 2;
+  int64    Operator = 3;
+}
+
+message ResourceQueryReq {
+  //类型 所有：0   某个pid:1   某个group : 2 (需要grpname)    单个资源getByid  Sid : 4,  mid: 5
+  int32 Type = 1;
+  // 组名
+  string GroupName = 2;
+  // 父级id
+  int64  Pid = 3;
+  // 自身id
+  int64  Sid  = 4;
+  string  Domain = 5;
+  // 菜单id
+  int64  Mid  = 6;
+}
+
+
+
+message MenuReq {
+  Action Action = 1;
+  MenuRes  Menu = 2;
+  int64    Operator = 3;
+}
+
+message UserAuthMenuListReq {
+  // 角色，为便于扩展，此处接收数组，实际只有1条角色
+  repeated  string  Roles  =  1;
+  //  附加权限
+  repeated  string  Perms  = 2;
+  string        Domain   = 3;
+  int64        Usid   = 4;
+  int32        UserType  =5;
+}
+
+message MenuResBindReq {
+  Action Action = 1;
+  //菜单
+  int64     MenuId      =2;
+  //资源id s
+  repeated int64  ResIds  = 3;
+  int64     Usid    = 4;
+  string    Ip      = 5;
+  int64    Operator = 6;
+}
+
+//根据菜单列表，取得相应的resource
+message MenuResourceReq {
+  repeated  int64  MenuIds  = 1;
+  string   Domain = 2;
+
 }

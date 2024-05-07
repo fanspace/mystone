@@ -8,6 +8,8 @@ import (
 	"net"
 	"net/http"
 	"reflect"
+	"regexp"
+	"strings"
 	"time"
 )
 
@@ -83,4 +85,34 @@ func Contains(obj interface{}, target interface{}) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func RemoveRepeatElement(list []string) []string {
+	// 创建一个临时map用来存储数组元素
+	temp := make(map[string]bool)
+	index := 0
+	for _, v := range list {
+		// 遍历数组元素，判断此元素是否已经存在map中
+		_, ok := temp[v]
+		if ok {
+			list = append(list[:index], list[index+1:]...)
+		} else {
+			temp[v] = true
+		}
+		index++
+	}
+	return list
+}
+
+// resource列表
+func IsNumIds(text string) bool {
+	//r,_ := regexp.Compile(`(^\d+\|?\d+$){1,9}`)
+	st := strings.Index(text, ",")
+	if st == 0 || st == (len(text)-1) {
+		return false
+	}
+	r, _ := regexp.Compile(`^\d+$`)
+	text2 := strings.Replace(text, ",", "", -1)
+	isCids := r.MatchString(text2)
+	return isCids
 }

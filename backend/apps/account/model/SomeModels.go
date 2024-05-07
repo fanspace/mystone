@@ -1,5 +1,7 @@
 package model
 
+import "github.com/dgrijalva/jwt-go"
+
 /**
  *  @Classname SomeModels
  *  @author: lf6128@163.com
@@ -26,4 +28,25 @@ type AccountLoginReq struct {
 type AccountLoginRes struct {
 	Token    string    `json:"token"`
 	UserInfo *UserInfo `json:"userInfo"`
+}
+
+type MyCustomClaims struct {
+	Domain   string `json:"domain"`
+	Usid     int64  `json:"usid"`
+	AgencyId int64  `json:"agency_id"`
+	Username string `json:"username"`
+	UserType int32  `json:"userType"`
+	Status   int32  `json:"status"`
+	Device   int32  `json:"device"`
+	jwt.StandardClaims
+}
+
+type MyClaim struct {
+	Domain   string `json:"domain"`
+	Usid     int64  `json:"usid"`
+	AgencyId int64  `json:"agency_id"`
+	Username string `json:"username"`
+	UserType int32  `json:"userType"`
+	Status   int32  `json:"status"`
+	Device   int32  `json:"device"`
 }

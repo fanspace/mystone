@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/casbin/casbin/v2"
-	"github.com/casbin/xorm-adapter/v2"
+	"github.com/casbin/xorm-adapter/v3"
 	"github.com/go-redis/redis/v8"
 	_ "github.com/go-sql-driver/mysql"
 	"os"

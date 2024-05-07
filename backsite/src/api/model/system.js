@@ -3,8 +3,15 @@ import http from "@/utils/request"
 
 export default {
 	menu: {
-		myMenus: {
+		/*myMenus: {
 			url: `${config.API_URL}/system/menu/my/1.6.1`,
+			name: "获取我的菜单",
+			get: async function(){
+				return await http.get(this.url);
+			}
+		},*/
+		myMenus: {
+			url: `${config.BACKEND_API_URL}/auth/menu/mine`,
 			name: "获取我的菜单",
 			get: async function(){
 				return await http.get(this.url);

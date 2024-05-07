@@ -4,6 +4,7 @@ import (
 	"backgate/service"
 	"backgate/settings"
 	"backgate/utils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
@@ -14,10 +15,10 @@ func MustLogin() gin.HandlerFunc {
 		logintype := c.Request.Header.Get("LoginType")
 		jwttokens := c.Request.Header.Get("Authorization")
 		if logintype == "" {
-			c.Set("mc", new(utils.MyClaim))
-			c.JSON(http.StatusUnauthorized, gin.H{"code": 403, "msg": "非认证的请求来源!"})
-			c.Abort()
-			return
+			//c.Set("mc", new(utils.MyClaim))
+			//c.JSON(http.StatusUnauthorized, gin.H{"code": 403, "msg": "非认证的请求来源!"})
+			//c.Abort()
+			//return
 		}
 		if strings.Contains(jwttokens, "Bearer ") {
 			jwttokens = strings.Replace(jwttokens, "Bearer ", "", 1)
@@ -29,24 +30,26 @@ func MustLogin() gin.HandlerFunc {
 				return
 			} else {
 				isBaned := service.IsUserBaned(mc.Username)
-				fitType := validUserTypeAndLoginType(logintype, mc.UserType)
+				//fitType := validUserTypeAndLoginType(logintype, mc.UserType)
 				if isBaned {
 					c.Set("mc", new(utils.MyClaim))
 					c.JSON(http.StatusUnauthorized, gin.H{"code": 403, "msg": "账号已被锁定!"})
-					c.Abort()
-					return
-				} else if !fitType {
-					c.Set("mc", new(utils.MyClaim))
-					c.JSON(http.StatusUnauthorized, gin.H{"code": 403, "msg": "禁止该用户登录!"})
 					c.Abort()
 					return
 				} else {
 					c.Set("mc", mc)
 					c.Next()
 				}
+				/*else if !fitType {
+					c.Set("mc", new(utils.MyClaim))
+					c.JSON(http.StatusUnauthorized, gin.H{"code": 403, "msg": "禁止该用户登录!"})
+					c.Abort()
+					return
+				}*/
 
 			}
 		} else {
+			fmt.Println("jwt token is not Bearer")
 			c.Set("mc", new(utils.MyClaim))
 			c.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg": "未登录或登录已过期!!!"})
 			c.Abort()

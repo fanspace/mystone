@@ -18,9 +18,9 @@ func (ags BackendGrpcService) HandleAccountLogin(ctx context.Context, in *pb.Acc
 		return nil, err
 	}
 	fmt.Println(token, usid)
-	res.Tokens = "SCUI.Administrator.Auth"
+	res.Token = token
 	res.UserInfo = &pb.UserInfo{
-		UserId:    1,
+		UserId:    usid,
 		Username:  "Administrator",
 		Showname:  "管理员",
 		Dashboard: "0",
@@ -29,12 +29,13 @@ func (ags BackendGrpcService) HandleAccountLogin(ctx context.Context, in *pb.Acc
 			"admin",
 			"Auditor"},
 	}
+	fmt.Println(res.Token, res.UserInfo)
 	return res, nil
 }
 
 // 获得所有的菜单
 func (ags BackendGrpcService) QueryAllMenus(ctx context.Context, in *pb.MenuQueryReq) (*pb.MenuListRes, error) {
-	return service.QueryAllMenus(in)
+	return service.QueryMenuList(in)
 }
 
 // 获得单个菜单

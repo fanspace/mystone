@@ -2,6 +2,7 @@ package service
 
 import (
 	"backend/apps/account/accUtils"
+	log "backend/logger"
 	"backend/relations"
 	"backend/settings"
 	pb "backend/training"
@@ -31,5 +32,13 @@ func UserLogin(req *pb.AccountLoginReq) (string, int64, error) {
 			return "", 0, errors.New(relations.CUS_ERR_1109)
 		}
 	}
-	return "", 0, nil
+	jwt, err := accUtils.GenJwt(acc.Domain, acc.Id, acc.Username, acc.UserType, 0, acc.Status, req.Device)
+	if err != nil {
+		log.Error(err.Error())
+		return "", relations.ZERO, errors.New(relations.CUS_ERR_1107)
+	}
+	if jwt == "" {
+		return jwt, relations.ZERO, errors.New(relations.CUS_ERR_1107)
+	}
+	return jwt, acc.Id, nil
 }

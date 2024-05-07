@@ -130,7 +130,7 @@ import SIdentify from './sidentify'
 				var user = await this.$API.auth.token.post(data)
 				if(user.success ){
 					this.$TOOL.cookie.set("TOKEN", user.data.token, {
-						expires: this.form.autologin? 24*60*60 : 0
+						expires: this.form.autologin? 4*60*60 : 0
 					})
 					this.$TOOL.data.set("USER_INFO", user.data.userInfo)
 				}else{

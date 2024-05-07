@@ -18,6 +18,7 @@ type MenuEntity struct {
 	MetaTitle   string `json:"meta_title" xorm:"not null default '' comment('meta标题') VARCHAR(50)"`
 	MetaIcon    string `json:"meta_icon" xorm:"not null default '' comment('meta icon') VARCHAR(50)"`
 	MetaNocache bool   `json:"meta_nocache" xorm:"not null default 0 comment('是否缓存（1:是 0:否）') TINYINT(1)"`
+	MetaType    string `json:"meta_type"`
 	Alwaysshow  bool   `json:"alwaysshow" xorm:"not null default 0 comment('是否总是显示（1:是0：否）') TINYINT(1)"`
 	MetaAffix   int    `json:"meta_affix" xorm:"not null default 0 comment('是否加固（1:是0：否）') TINYINT(1)"`
 	Type        int32  `json:"type" xorm:"not null default 2 comment('类型(1:固定,2:权限配置,3特殊)') TINYINT(4)"`

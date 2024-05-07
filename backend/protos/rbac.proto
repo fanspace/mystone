@@ -1,0 +1,136 @@
+syntax = "proto3";
+package training;
+import "commonForm.proto";
+
+// -----------------------------   授权部分  ----------------------------
+
+message PermsRes {
+  int64          Id      = 1;
+  //权限名称
+  string         PermName    = 2;
+  //权限名称中文 例如  账户查询权限(只读）、  账户管理权限（全，包含写，不再另设）
+  string         PermNameCn       = 3;
+  //资源列表  父级和子级是互斥
+  string         Resources    = 4;
+  //资源中文
+  string        ResNames    = 5;
+  // 菜单列表 父子必须同时存在，本菜单列表中，仅列举子菜单，需要与group联合出菜单
+  string         Menus             = 6;
+  // 菜单中文名
+  string         MenuNames      = 7;
+  //群组名称
+  string         Group         =  8;
+  string         Domain        =  9;
+  string         Remark         = 10;
+  int64          CreatedBy    =  11;
+  int64          CreatedAt    = 12;
+  int64          UpdatedBy    = 13;
+  int64          UpdatedAt     = 14;
+  // 等级，目前用处不大
+  int32          Level          = 15;
+  // 该组所有权限，即某组管理员
+  bool           IsAll          = 16;
+
+}
+
+message PermsListRes {
+  int64     Total   =  1;
+  repeated  PermsRes   Perms  = 2;
+}
+
+message PermsListReq {
+  // 按权限名查询
+  string   PermName    =  1;
+  // 按权限中文名查询
+  string   PermNameCn    =  2;
+  //  按组
+  string   Group        = 3;
+  // 按域
+  string   Domain       = 4;
+  int32    PageNo         = 5;
+  int32    PageSize        = 6;
+
+
+}
+
+message PermsReq {
+  Action  Action  = 1;
+  PermsRes  Perm  = 2;
+  int64    Operator  = 3;
+
+}
+message PermFetchReq {
+  int64 Id  = 1;
+}
+message RoleFetchReq {
+  int64 Id = 1;
+}
+message RoleRes {
+  int64           Id        = 1;
+  string          RoleName    = 2;
+  string          RoleNameCn    = 3;
+  string          Perms        = 4;
+  string          PermsName    = 5;
+  string          Domain      = 6;
+  string          Remark     = 7;
+  // 默认1 对应用户类型    2 特殊角色，单独分配
+  int32           RoleCate   = 8;
+}
+
+message RolesListRes {
+  int64     Total   =  1;
+  repeated  RoleRes  Roles  =  2;
+}
+
+message RoleReq {
+  Action  Action  = 1;
+  RoleRes  Role  = 2;
+  int64    Operator  = 3;
+
+}
+
+message RolesListReq {
+  // 按权限名查询， 因为数据条数少，中英文合并
+  string   RoleName    =  1;
+  // 包含权限名, 中英文皆可
+  string   PermName =  2;
+
+  // 按域
+  string   Domain       = 3;
+  int32    PageNo         = 4;
+  int32    PageSize        = 5;
+  int32    RoleCate        = 6;
+
+}
+
+// 根据role 获取 先对应的菜单
+message AuthMenuReq {
+  repeated  string   Roles  = 1;
+  string    Domain  = 2;
+  int64     Usid = 3;
+}
+
+
+// 查询授权用户可显示的菜单
+message AuthMenu {
+  // 授权菜单中的组列表
+  string  Group   =  1;
+  // 授权用户子菜单的列表字符串   格式：2,3,4
+  string  MenuIds  =  2;
+}
+
+message AuthMenuRes {
+  repeated AuthMenu  AuthMenu = 1;
+}
+
+
+// notice rbac  which res had been modified
+message  ModifyResourceNotice {
+  string   Url =  1;
+  string   Act  = 2;
+  string   Domain = 3;
+  Action  Action  = 4;
+  string   Oldurl = 5;
+  string   Oldact = 6;
+}
+

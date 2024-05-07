@@ -23,7 +23,7 @@ message AccountLoginReq {
 
 message AccountLoginRes {
   // jwt
-  string Tokens = 1;
+  string Token = 1;
   // user Id
   UserInfo  UserInfo =  2;
 }

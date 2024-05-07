@@ -8,6 +8,7 @@ message CommonResponse{
   int64 id = 4; //业务数据主键
 }
 /*特指修改数据状态*/
+/*特指修改数据状态*/
 enum Action{
   ALL = 0;//全部
   NEW = 1;// 新增

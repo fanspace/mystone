@@ -12,6 +12,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"strings"
 	"time"
 )
@@ -126,4 +127,44 @@ func GenAccountPwd(password string, passwordhash string, usertype int32) string 
 	signature := strings.ToUpper(hex.EncodeToString(m.Sum(nil)))
 	fmt.Println(signature)
 	return signature
+}
+
+// 生成jwt
+func GenJwt(domain string, usid int64, username string, usertype int32, agencyId int64, status int32, device int32) (string, error) {
+	jwtStr := ""
+	eat := int64(relations.ZERO)
+	if settings.Cfg.ReleaseMode {
+
+		if domain == "" || domain == "frontend" {
+			jwtStr = relations.JWT_SECRET_STRING_PROD_NOR
+			eat = time.Now().Add(time.Hour * 24 * 10).Unix() //10days
+		} else {
+			jwtStr = relations.JWT_SECRET_STRING_PROD_MAN
+			eat = time.Now().Add(time.Hour * 3).Unix()
+		}
+	} else {
+		jwtStr = relations.JWT_SECRET_STRING_DEV
+		eat = time.Now().Add(time.Hour * 48).Unix()
+	}
+	mySigningKey := []byte(jwtStr)
+	claims := model.MyCustomClaims{
+		domain,
+		usid,
+		agencyId,
+		username,
+		usertype,
+		status,
+		device,
+		jwt.StandardClaims{
+			ExpiresAt: eat,
+			Issuer:    "QDZYJSRYJXYYPT",
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	ss, err := token.SignedString(mySigningKey)
+	if err != nil {
+		log.Error(err.Error())
+	}
+	return ss, err
 }

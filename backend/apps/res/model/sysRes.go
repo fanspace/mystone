@@ -1,52 +1,54 @@
 package model
 
 import (
+	"backend/db"
+	"backend/relations"
+	"backend/utils"
+
+	log "backend/logger"
 	"errors"
 	"fmt"
-	log "enlist_res/logger"
-	"enlist_res/internal/common"
-
 )
 
 type Resource struct {
-	Id        int64  `json:"id" xorm:"pk autoincr BIGINT(20)"`
-	Name      string `json:"name"  xorm:"not null VARCHAR(64)"`
-	Url      string `json:"url"  xorm:"not null VARCHAR(255)"`
-	Act      string   `json:"act"  xorm:"not null VARCHAR(32)"`
-	Pid    int64    `json:"pid" xorm:"not null BIGINT(20)"`
-	IsLeaf   bool    `json:"isLeaf" xorm:"not null default 1 TINYINT(1)"`
-	Domain   string   `json:"domain"  xorm:"VARCHAR(255)"`
-	Remark   string   `json:"remark"  xorm:"VARCHAR(255)"`
-	Group      string    `json:"group" xorm:"VARCHAR(64)"`
-	Level       int32       `json:"level" xorm:"not null default 0 comment('层级') TINYINT(4)"`
-	CreatedBy int64  `json:"created_by" xorm:"BIGINT(20)"`
-	CreatedAt int64  `xorm:"created"`
-	UpdatedBy int64  `json:"updated_by" xorm:"BIGINT(20)"`
-	UpdatedAt int64  `xorm:"updated"`
-	Version int 		  `xorm:"version"`
-	Children  []*Resource		`json:"children" xorm:"-"`
+	Id        int64       `json:"id" xorm:"pk autoincr BIGINT(20)"`
+	Name      string      `json:"name"  xorm:"not null VARCHAR(64)"`
+	Url       string      `json:"url"  xorm:"not null VARCHAR(255)"`
+	Act       string      `json:"act"  xorm:"not null VARCHAR(32)"`
+	Pid       int64       `json:"pid" xorm:"not null BIGINT(20)"`
+	IsLeaf    bool        `json:"isLeaf" xorm:"not null default 1 TINYINT(1)"`
+	Domain    string      `json:"domain"  xorm:"VARCHAR(255)"`
+	Remark    string      `json:"remark"  xorm:"VARCHAR(255)"`
+	Group     string      `json:"group" xorm:"VARCHAR(64)"`
+	Level     int32       `json:"level" xorm:"not null default 0 comment('层级') TINYINT(4)"`
+	CreatedBy int64       `json:"created_by" xorm:"BIGINT(20)"`
+	CreatedAt int64       `xorm:"created"`
+	UpdatedBy int64       `json:"updated_by" xorm:"BIGINT(20)"`
+	UpdatedAt int64       `xorm:"updated"`
+	Version   int         `xorm:"version"`
+	Children  []*Resource `json:"children" xorm:"-"`
 }
 
-func(zr *Resource) InsertResorce()(int64, error) {
+func (zr *Resource) InsertResorce() (int64, error) {
 	lastzr := new(Resource)
-	has, err := Orm.Where("`group` like ? ", zr.Group).And("domain like ?", zr.Domain).Desc("id").Limit(1).Get(lastzr)
+	has, err := db.Orm.Where("`group` like ? ", zr.Group).And("domain like ?", zr.Domain).Desc("id").Limit(1).Get(lastzr)
 	if err != nil {
 		return 0, err
 	}
 	if has && lastzr != nil && lastzr.Id > 0 {
 		zr.Id = lastzr.Id + 1
 	} else {
-		lastdata :=new(Resource)
-		has, err := Orm.Where("id > ? ", 0).Desc("id").Limit(1).Get(lastdata)
+		lastdata := new(Resource)
+		has, err := db.Orm.Where("id > ? ", 0).Desc("id").Limit(1).Get(lastdata)
 		if err != nil {
 			return 0, err
 		}
 		if !has {
-			return 0, errors.New(common.CUS_ERR_4004)
+			return 0, errors.New(relations.CUS_ERR_4004)
 		}
-		zr.Id = ((lastdata.Id / 100) + 1 ) * 100 + 1
+		zr.Id = ((lastdata.Id/100)+1)*100 + 1
 	}
-	_, err = Orm.Insert(zr)
+	_, err = db.Orm.Insert(zr)
 	if err != nil {
 		log.Error(err.Error())
 		return 0, err
@@ -55,8 +57,8 @@ func(zr *Resource) InsertResorce()(int64, error) {
 	return zr.Id, nil
 }
 
-func (zr *Resource) UpdateResource()(bool, error) {
-	_, err := Orm.ID(zr.Id).AllCols().Update(zr)
+func (zr *Resource) UpdateResource() (bool, error) {
+	_, err := db.Orm.ID(zr.Id).AllCols().Update(zr)
 	if err != nil {
 		log.Error(err.Error())
 		return false, err
@@ -72,16 +74,16 @@ func DeleteResourceById(id int64) error {
 		return err
 	}
 	if len(child) > 0 {
-		return errors.New(common.CUS_ERR_4005)
+		return errors.New(relations.CUS_ERR_4005)
 	}
 	me := new(Resource)
-	has, err := Orm.ID(id).Unscoped().Get(me)
+	has, err := db.Orm.ID(id).Unscoped().Get(me)
 	if err != nil {
 		log.Error(err.Error())
 		return err
 	}
 	if has {
-		_, err := Orm.ID(id).Unscoped().Delete(me)
+		_, err := db.Orm.ID(id).Unscoped().Delete(me)
 		if err != nil {
 			log.Error(err.Error())
 			return err
@@ -90,64 +92,59 @@ func DeleteResourceById(id int64) error {
 	return nil
 }
 
-
 func GetResourceById(id int64) (*Resource, error) {
 	zr := new(Resource)
-	has, err := Orm.ID(id).Get(zr)
+	has, err := db.Orm.ID(id).Get(zr)
 	if err != nil {
 		log.Error(err.Error())
 		return nil, err
 	}
 	if !has {
-		return nil, errors.New(common.CUS_ERR_4004)
+		return nil, errors.New(relations.CUS_ERR_4004)
 	}
 	return zr, nil
 }
 
-
 //  某id下的子资源
 
-func FindResourcesByPid(pid int64)([]*Resource, error) {
+func FindResourcesByPid(pid int64) ([]*Resource, error) {
 	smlist := make([]*Resource, 0)
-	err := Orm.Where("pid = ? ", pid).Find(&smlist)
+	err := db.Orm.Where("pid = ? ", pid).Find(&smlist)
 	if err != nil {
 		log.Error(err.Error())
 	}
 	return smlist, err
 }
 
-
-//   根据gourpname  获得 该类主资源
-func GetParentZjResourcesByGrpName(grpname string)(*Resource, error) {
+// 根据gourpname  获得 该类主资源
+func GetParentZjResourcesByGrpName(grpname string) (*Resource, error) {
 	sm := new(Resource)
-	has, err := Orm.Where(" `group` like ? ", grpname).And("pid = ? ", 0).Get(sm)
+	has, err := db.Orm.Where(" `group` like ? ", grpname).And("pid = ? ", 0).Get(sm)
 	if err != nil {
 		log.Error(err.Error())
 		return nil, err
 	}
 	if !has {
-		return nil, errors.New(common.CUS_ERR_4004)
+		return nil, errors.New(relations.CUS_ERR_4004)
 	}
 	return sm, nil
 }
 
-
 // 根据pid得所有
-func FindAllResourcesByPid(pid int64, domain string)([]*Resource, error) {
+func FindAllResourcesByPid(pid int64, domain string) ([]*Resource, error) {
 	reslist := make([]*Resource, 0)
-	err := Orm.Where("pid = ? ", pid).And("domain like ?", domain).Find(&reslist)
+	err := db.Orm.Where("pid = ? ", pid).And("domain like ?", domain).Find(&reslist)
 	if err != nil {
 		log.Error(err.Error())
 	}
 	return reslist, err
 }
 
-
 // 根据子项字符串，获得列表
-func FindResourcesByIdArr(ids string) ([]*Resource, error)  {
+func FindResourcesByIdArr(ids string) ([]*Resource, error) {
 	res := make([]*Resource, 0)
 	sql := fmt.Sprintf("select * from resource where id in ( %s ) ", ids)
-	err := Orm.SQL(sql).Find(&res)
+	err := db.Orm.SQL(sql).Find(&res)
 	if err != nil {
 		log.Error(err.Error())
 
@@ -156,7 +153,7 @@ func FindResourcesByIdArr(ids string) ([]*Resource, error)  {
 }
 
 func QueryMenuStrByUsid(usid int) (string, error) {
-	result, err := Orm.Query("select GROUP_CONCAT(menus) as menus from user_menu where usid = ?", usid)
+	result, err := db.Orm.Query("select GROUP_CONCAT(menus) as menus from user_menu where usid = ?", usid)
 	if err != nil {
 		log.Error(err.Error())
 		return "", err
@@ -166,8 +163,8 @@ func QueryMenuStrByUsid(usid int) (string, error) {
 	if menus == "" {
 		return "", nil
 	}
-	if !common.IsResIds(menus) {
-		return "", errors.New(common.CUS_ERR_3011)
+	if !utils.IsNumIds(menus) {
+		return "", errors.New(relations.CUS_ERR_3011)
 	}
 	return menus, nil
 }
@@ -179,9 +176,9 @@ func QueryResByUsid(usid int) ([]*Resource, error) {
 		return res, err
 	}
 	if menus == "" {
-		return res, errors.New(common.CUS_ERR_4004)
+		return res, errors.New(relations.CUS_ERR_4004)
 	}
-	err = Orm.SQL("select * from resource a,(select res_id from menu_res where menu_id in ("+menus+") group by res_id )b  where a.id = b.res_id").Find(&res)
+	err = db.Orm.SQL("select * from resource a,(select res_id from menu_res where menu_id in (" + menus + ") group by res_id )b  where a.id = b.res_id").Find(&res)
 	if err != nil {
 		log.Error(err.Error())
 		return res, err
@@ -190,14 +187,13 @@ func QueryResByUsid(usid int) ([]*Resource, error) {
 	return res, nil
 }
 
-
-//  初始化资源
+// 初始化资源
 func InitResData() error {
-   res := &Resource{
-   	Id : 1,
-   }
+	res := &Resource{
+		Id: 1,
+	}
 
-	hasdata, err := Orm.Exist(res)
+	hasdata, err := db.Orm.Exist(res)
 	if err != nil {
 		log.Error(err.Error())
 		return err
@@ -205,26 +201,26 @@ func InitResData() error {
 	if hasdata {
 		return nil
 	} else {
-	reslist := make([]*Resource, 0)
-	resgrp := &Resource{
-		Id:        1,
-		Name:      "资源管理",
-		Url:       "/*",
-		Act:       "*",
-		Pid:       0,
-		IsLeaf:    false,
-		Domain:    "back",
-		Remark:    "/sys/res/entry",
-		Group:     "resMgr",
-		Level:     0,
-		CreatedBy: 0,
-		CreatedAt: 1600838950,
-		UpdatedBy: 0,
-		UpdatedAt: 1600838950,
-		Version:   1,
-	}
+		reslist := make([]*Resource, 0)
+		resgrp := &Resource{
+			Id:        1,
+			Name:      "资源管理",
+			Url:       "/*",
+			Act:       "*",
+			Pid:       0,
+			IsLeaf:    false,
+			Domain:    "back",
+			Remark:    "/sys/res/entry",
+			Group:     "resMgr",
+			Level:     0,
+			CreatedBy: 0,
+			CreatedAt: 1600838950,
+			UpdatedBy: 0,
+			UpdatedAt: 1600838950,
+			Version:   1,
+		}
 
-	resitem1 := &Resource{
+		resitem1 := &Resource{
 			Id:        2,
 			Name:      "查询资源列表",
 			Url:       "/list",
@@ -575,11 +571,11 @@ func InitResData() error {
 		reslist = append(append(append(append(reslist, menugrp), menuitem1), menuitem2), menuitem3)
 		reslist = append(append(append(append(reslist, dictgrp), dictitem1), dictitem2), dictitem3)
 		reslist = append(append(append(append(append(append(append(reslist, rbacgrp), rbacitem1), rbacitem2), rbacitem3), rbacitem4), rbacitem5), rbacitem6)
-		_, err := Orm.Insert(&reslist)
+		_, err := db.Orm.Insert(&reslist)
 		if err != nil {
 			log.Error(err.Error())
 			return err
 		}
 	}
-	  return nil
+	return nil
 }
