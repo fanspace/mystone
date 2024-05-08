@@ -17,8 +17,8 @@ import (
 // @Tags Account
 // @Accept json
 // @Produce json
-// @Param req body enlist.AccountLoginReq true "user login"
-// @Success 200 {object} gin.H
+// @Param req body training.AccountLoginReq true "user login"
+// @Success 200 {object} map[string]any
 // @Router /login [post]
 func Login(c *gin.Context) {
 	req := new(pb.AccountLoginReq)
@@ -61,7 +61,7 @@ func Login(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param username path string true "get pin code"
-// @Success 200 {object} gin.H
+// @Success 200 {object} map[string]any
 // @Router /pin/{username} [get]
 func GenPin(c *gin.Context) {
 	uname := c.Param("username")

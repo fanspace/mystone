@@ -13,17 +13,20 @@ func initBackendRouter(router *gin.Engine) {
 	router.POST(prefix+"/login", controller.Login)
 	router.GET(prefix+"/pin/:username", controller.GenPin)
 
-	// 只验证登录
+	// 只验证登录,不验证权限
 	authGroup := router.Group(prefix + "/auth")
 	authGroup.Use(middleware.MustLogin())
 	{
 		authGroup.GET("/menu/mine", controller.QueryMyMenu)
 	}
 
-	resGroup := router.Group(prefix + "/res")
-	resGroup.Use(middleware.MustLogin(), middleware.MustAuthorizer(rbac.Casbin))
+	menuMgrGroup := router.Group(prefix + "/menuMgr")
+	menuMgrGroup.Use(middleware.MustLogin(), middleware.MustAuthorizer(rbac.Casbin))
 	{
-		resGroup.POST("/menu/list", controller.QueryAllMenus)
-		resGroup.POST("/menu/query", controller.FetchMenu)
+		menuMgrGroup.POST("/list", controller.QueryAllMenus)
+		menuMgrGroup.POST("/query", controller.FetchMenu)
+		menuMgrGroup.POST("/add", controller.AddMenu)
+		menuMgrGroup.POST("/update", controller.UpdateMenu)
+		menuMgrGroup.POST("/del", controller.DelMenu)
 	}
 }

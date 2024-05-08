@@ -119,6 +119,7 @@ func GenAccountPwd(password string, passwordhash string, usertype int32) string 
 	} else {
 		sec = PWD_SECRET_STRING_BACK
 	}
+	fmt.Println(password)
 	ori := password + passwordhash
 	pwd := []byte(ori)
 	key := []byte(sec)

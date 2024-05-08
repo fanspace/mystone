@@ -14,14 +14,14 @@ import (
 	"strings"
 )
 
-// @Summary 查询我的菜单
+// @Summary 菜单
 // @Description 查询我的菜单
-// @Tags System/Res
+// @Tags Auth
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Success 200 {object} gin.H
-// @Router /menu/mine [get]
+// @Success 200 {object} map[string]any
+// @Router /auth/menu/mine [get]
 // @Date   9/17/2020 10:58 AM
 func QueryMyMenu(c *gin.Context) {
 	req := new(pb.MenuQueryReq)
@@ -52,15 +52,15 @@ func QueryMyMenu(c *gin.Context) {
 
 }
 
-// @Summary 查询管理端菜单列表
+// @Summary 菜单管理
 // @Description 查询管理端菜单列表
-// @Tags System/Res
+// @Tags MenuMgr
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param req body enlist.MenuQueryReq true "query menu List"
-// @Success 200 {object} gin.H
-// @Router /res/menu/list [post]
+// @Param req body training.MenuQueryReq true "query menu List"
+// @Success 200 {object} map[string]any
+// @Router /menuMgr/list [post]
 // @Date   9/17/2020 10:58 AM
 func QueryAllMenus(c *gin.Context) {
 	req := new(pb.MenuQueryReq)
@@ -92,15 +92,15 @@ func QueryAllMenus(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": true, "msg": "", "data": datas, "datetime": res.(*pb.MenuListRes).Total})
 }
 
-// @Summary 查询管理端菜单
+// @Summary 菜单管理
 // @Description 查询管理端菜单
-// @Tags System/Res
+// @Tags MenuMgr
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param req body enlist.MenuQueryReq true "query menu By Id"
-// @Success 200 {object} gin.H
-// @Router /res/menu/query [post]
+// @Param req body training.MenuQueryReq true "query menu By Id"
+// @Success 200 {object} map[string]any
+// @Router /menuMgr/query [post]
 // @Date   9/21/2020 10:58 AM
 func FetchMenu(c *gin.Context) {
 	req := new(pb.MenuQueryReq)
@@ -125,5 +125,50 @@ func FetchMenu(c *gin.Context) {
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": true, "data": res})
+	return
+}
+
+// @Summary 菜单管理
+// @Description 新增菜单
+// @Tags MenuMgr
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param req body training.MenuQueryReq true "query menu By Id"
+// @Success 200 {object} map[string]any
+// @Router /menuMgr/add [post]
+// @Date   9/21/2020 10:58 AM
+func AddMenu(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": true, "data": ""})
+	return
+}
+
+// @Summary 菜单管理
+// @Description 编辑菜单
+// @Tags MenuMgr
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param req body training.MenuQueryReq true "query menu By Id"
+// @Success 200 {object} map[string]any
+// @Router /menuMgr/update [post]
+// @Date   9/21/2020 10:58 AM
+func UpdateMenu(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": true, "data": ""})
+	return
+}
+
+// @Summary 菜单管理
+// @Description 删除菜单
+// @Tags MenuMgr
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param req body training.MenuQueryReq true "query menu By Id"
+// @Success 200 {object} map[string]any
+// @Router /menuMgr/del [post]
+// @Date   9/21/2020 10:58 AM
+func DelMenu(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": true, "data": ""})
 	return
 }
