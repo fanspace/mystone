@@ -5,6 +5,7 @@ import (
 	"backgate/relations"
 	"backgate/settings"
 	pb "backgate/training"
+	"backgate/utils"
 	"context"
 	"errors"
 	"fmt"
@@ -23,7 +24,10 @@ import (
 *
  */
 func dialgrpc(address string) (*grpc.ClientConn, error) {
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	var opts []grpc.DialOption
+	opts = append(opts, grpc.WithInsecure())
+	opts = append(opts, grpc.WithPerRPCCredentials(new(customCredential)))
+	conn, err := grpc.Dial(address, opts...)
 	if err != nil {
 		log.Error(err.Error())
 		return nil, err
@@ -101,4 +105,23 @@ func DealGrpcCall[T any](req T, methodName string, grpcName string) (any, error)
 		return res[0].Interface(), nil
 	}
 	return nil, err
+}
+
+type customCredential struct{}
+
+func (c customCredential) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {
+	appkey := utils.EncryptGrpcCredentials("Ab365FDG")
+	return map[string]string{
+		"appid":  "Ab365FDG",
+		"appkey": appkey,
+	}, nil
+}
+
+func (c customCredential) RequireTransportSecurity() bool {
+	/*
+		if OpenTLS {
+			return true
+		}*/
+	// 不使用tls
+	return false
 }

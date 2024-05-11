@@ -22,7 +22,11 @@ func main() {
 		log.Error(err.Error())
 		os.Exit(1)
 	}
-	s := grpc.NewServer()
+	//s := grpc.NewServer()
+	serverOptions := []grpc.ServerOption{
+		grpc.UnaryInterceptor(apps.TokenInterceptor()),
+	}
+	s := grpc.NewServer(serverOptions...)
 	pb.RegisterBackendGrpcServer(s, BackendGrpcService)
 	log.Info("Account Grpc Server Starting on " + settings.Cfg.ServiceSettings.ListenAddress)
 

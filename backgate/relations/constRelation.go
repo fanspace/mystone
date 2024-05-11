@@ -2,6 +2,10 @@ package relations
 
 var (
 	DOMAINS_LIMITED = [3]string{"foreend", "backend", "com"}
+	GRPC_CREDENTIAL = map[string]string{
+		"Ab365FDG": "9aBcDeFgHiJkLmNoPqRsTuVwXyZz123",
+		"GSER3exs": "456789abCDefGhIjKlMnOpQrStUvWxYz",
+	}
 )
 
 const (
@@ -64,4 +68,6 @@ const (
 	STR_BAN_USER  = "banuser"
 
 	RABBIT_USER_ROUTING_KEY = "abcdefcc"
+	GRPC_TOKEN_APPID        = "abc"
+	GRPC_TOKEN_APPKEY       = "def"
 )

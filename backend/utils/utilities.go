@@ -1,7 +1,10 @@
 package utils
 
 import (
+	"backend/relations"
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -115,4 +118,19 @@ func IsNumIds(text string) bool {
 	text2 := strings.Replace(text, ",", "", -1)
 	isCids := r.MatchString(text2)
 	return isCids
+}
+
+func EncryptGrpcCredentials(credentials string) string {
+	salt := relations.GRPC_CREDENTIAL[credentials]
+	fmt.Println(salt)
+	inputString := credentials + salt
+	// 创建一个新的SHA256实例
+	hasher := sha256.New()
+	// 写入待加密的字符串数据
+	hasher.Write([]byte(inputString))
+	// 计算哈希值
+	hashedBytes := hasher.Sum(nil)
+	// 将哈希字节切片转换为16进制字符串
+	hashedString := hex.EncodeToString(hashedBytes)
+	return hashedString
 }

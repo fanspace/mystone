@@ -6,7 +6,9 @@ import (
 	"backgate/settings"
 	"backgate/validations"
 	"bytes"
+	"crypto/sha256"
 	"crypto/tls"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
@@ -335,4 +337,19 @@ func DistributeAreaByDistrict(dist int32) int64 {
 	default:
 		return 1
 	}
+}
+
+func EncryptGrpcCredentials(credentials string) string {
+	salt := relations.GRPC_CREDENTIAL[credentials]
+	fmt.Println(salt)
+	inputString := credentials + salt
+	// 创建一个新的SHA256实例
+	hasher := sha256.New()
+	// 写入待加密的字符串数据
+	hasher.Write([]byte(inputString))
+	// 计算哈希值
+	hashedBytes := hasher.Sum(nil)
+	// 将哈希字节切片转换为16进制字符串
+	hashedString := hex.EncodeToString(hashedBytes)
+	return hashedString
 }

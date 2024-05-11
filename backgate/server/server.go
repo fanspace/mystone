@@ -44,6 +44,7 @@ func NewServer() *GracefulServer {
 	// 开启bigcache
 	service.InitCache()
 	service.InitGrpcs()
+	service.InitApis()
 	return Srv
 }
 

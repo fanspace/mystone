@@ -74,3 +74,65 @@ func GetPinCode(sncode string) (string, error) {
 		return pin, nil
 	}
 }
+
+// expireTime 0表示不过期, 单位为秒
+func SetSimpleKey(keyname string, expireTime int, value interface{}) error {
+	redis := db.Rpool.Get()
+	defer redis.Close()
+	_, err := redis.Do("SET", keyname, value)
+	if err != nil {
+		log.Error(err.Error())
+		return err
+	}
+
+	if expireTime > 0 {
+		_, err = redis.Do("EXPIRE", keyname, expireTime)
+		if err != nil {
+			log.Error("redis set EXPIRE  :" + keyname + " 失败")
+			return err
+		}
+	}
+
+	return nil
+}
+
+func GetSimpleKeyWithoutTTL(keyname string) (interface{}, error) {
+	redis := db.Rpool.Get()
+	defer redis.Close()
+	res, err := redis.Do("GET", keyname)
+	if err != nil {
+		log.Error(err.Error())
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func GetSimpleKey(keyname string) (interface{}, error) {
+
+	redis := db.Rpool.Get()
+	defer redis.Close()
+	tmpttl, err := red.Int64(redis.Do("Ttl", keyname))
+	if err != nil {
+		log.Error(err.Error())
+		return nil, errors.New(relations.CUS_ERR_1009)
+	}
+	if tmpttl == -2 {
+		return nil, nil
+	} else if tmpttl == -1 {
+		_, err := redis.Do("DEL", keyname)
+		if err != nil {
+			log.Error(err.Error())
+			return nil, err
+		}
+		return nil, nil
+	} else {
+		res, err := redis.Do("GET", keyname)
+		if err != nil {
+			log.Error(err.Error())
+			return nil, err
+		}
+
+		return res, nil
+	}
+}

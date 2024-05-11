@@ -12,14 +12,15 @@ import (
 
 type Resource struct {
 	Id        int64       `json:"id" xorm:"pk autoincr BIGINT(20)"`
-	Name      string      `json:"name"  xorm:"not null VARCHAR(64)"`
+	Name      string      `json:"name"  xorm:"not null VARCHAR(64) INDEX(grp_name_unique_idx)"`
+	NameCn    string      `json:"nameCn" xorm:"VARCHAR(255)"`
 	Url       string      `json:"url"  xorm:"not null VARCHAR(255)"`
 	Act       string      `json:"act"  xorm:"not null VARCHAR(32)"`
 	Pid       int64       `json:"pid" xorm:"not null BIGINT(20)"`
 	IsLeaf    bool        `json:"isLeaf" xorm:"not null default 1 TINYINT(1)"`
 	Domain    string      `json:"domain"  xorm:"VARCHAR(255)"`
 	Remark    string      `json:"remark"  xorm:"VARCHAR(255)"`
-	Group     string      `json:"group" xorm:"VARCHAR(64)"`
+	GroupName string      `json:"groupName" xorm:"not null VARCHAR(64) INDEX(grp_name_unique_idx)"`
 	Level     int32       `json:"level" xorm:"not null default 0 comment('层级') TINYINT(4)"`
 	CreatedBy int64       `json:"created_by" xorm:"BIGINT(20)"`
 	CreatedAt int64       `xorm:"created"`
@@ -31,7 +32,7 @@ type Resource struct {
 
 func (zr *Resource) InsertResorce() (int64, error) {
 	lastzr := new(Resource)
-	has, err := db.Orm.Where("`group` like ? ", zr.Group).And("domain like ?", zr.Domain).Desc("id").Limit(1).Get(lastzr)
+	has, err := db.Orm.Where("`group` like ? ", zr.GroupName).And("domain like ?", zr.Domain).Desc("id").Limit(1).Get(lastzr)
 	if err != nil {
 		return 0, err
 	}
@@ -211,7 +212,7 @@ func InitResData() error {
 			IsLeaf:    false,
 			Domain:    "back",
 			Remark:    "/sys/res/entry",
-			Group:     "resMgr",
+			GroupName: "resMgr",
 			Level:     0,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -229,7 +230,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/sys/res/entry",
-			Group:     "resMgr",
+			GroupName: "resMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -247,7 +248,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/sys/res/entry",
-			Group:     "resMgr",
+			GroupName: "resMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -265,7 +266,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/sys/res/entry",
-			Group:     "resMgr",
+			GroupName: "resMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -282,7 +283,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/sys/res/entry",
-			Group:     "resMgr",
+			GroupName: "resMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -299,7 +300,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/sys/res/entry",
-			Group:     "resMgr",
+			GroupName: "resMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -317,7 +318,7 @@ func InitResData() error {
 			IsLeaf:    false,
 			Domain:    "back",
 			Remark:    "/sys/res/menu",
-			Group:     "menuMgr",
+			GroupName: "menuMgr",
 			Level:     0,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -334,7 +335,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/sys/res/menu",
-			Group:     "menuMgr",
+			GroupName: "menuMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -352,7 +353,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/sys/res/menu",
-			Group:     "menuMgr",
+			GroupName: "menuMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -370,7 +371,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/sys/res/menu",
-			Group:     "menuMgr",
+			GroupName: "menuMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -388,7 +389,7 @@ func InitResData() error {
 			IsLeaf:    false,
 			Domain:    "back",
 			Remark:    "/sys/res/dict",
-			Group:     "dictMgr",
+			GroupName: "dictMgr",
 			Level:     0,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -405,7 +406,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/sys/res/dict",
-			Group:     "dictMgr",
+			GroupName: "dictMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -422,7 +423,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/sys/res/dict",
-			Group:     "dictMgr",
+			GroupName: "dictMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -439,7 +440,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/sys/res/dict",
-			Group:     "dictMgr",
+			GroupName: "dictMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -457,7 +458,7 @@ func InitResData() error {
 			IsLeaf:    false,
 			Domain:    "back",
 			Remark:    "/acc/rbac",
-			Group:     "rbacMgr",
+			GroupName: "rbacMgr",
 			Level:     0,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -474,7 +475,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/acc/rbac",
-			Group:     "rbacMgr",
+			GroupName: "rbacMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -491,7 +492,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/acc/rbac",
-			Group:     "rbacMgr",
+			GroupName: "rbacMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -508,7 +509,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/acc/rbac",
-			Group:     "rbacMgr",
+			GroupName: "rbacMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -525,7 +526,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/acc/rbac",
-			Group:     "rbacMgr",
+			GroupName: "rbacMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -542,7 +543,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/acc/rbac",
-			Group:     "rbacMgr",
+			GroupName: "rbacMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,
@@ -559,7 +560,7 @@ func InitResData() error {
 			IsLeaf:    true,
 			Domain:    "back",
 			Remark:    "/acc/rbac",
-			Group:     "rbacMgr",
+			GroupName: "rbacMgr",
 			Level:     1,
 			CreatedBy: 0,
 			CreatedAt: 1600838950,

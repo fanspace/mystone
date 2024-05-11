@@ -5,11 +5,17 @@ import (
 	"backgate/middleware"
 	"backgate/rbac"
 	"backgate/relations"
+	"backgate/settings"
 	"github.com/gin-gonic/gin"
 )
 
 func initBackendRouter(router *gin.Engine) {
 	prefix := relations.APISITE_PREFIX
+
+	if !settings.Cfg.ReleaseMode {
+		router.GET(prefix+"/apis", controller.ListApis)
+	}
+
 	router.POST(prefix+"/login", controller.Login)
 	router.GET(prefix+"/pin/:username", controller.GenPin)
 
@@ -29,4 +35,23 @@ func initBackendRouter(router *gin.Engine) {
 		menuMgrGroup.POST("/update", controller.UpdateMenu)
 		menuMgrGroup.POST("/del", controller.DelMenu)
 	}
+
+	apiMgrGroup := router.Group(prefix + "/apiMgr")
+	apiMgrGroup.Use(middleware.MustLogin(), middleware.MustAuthorizer(rbac.Casbin))
+	{
+		apiMgrGroup.POST("/list", controller.ListApis)
+		apiMgrGroup.POST("/add", controller.AddApi)
+		apiMgrGroup.POST("/update", controller.UpdateApi)
+		apiMgrGroup.POST("/del", controller.DelApi)
+	}
+
+	dictMgrGroup := router.Group(prefix + "/dictMgr")
+	dictMgrGroup.Use(middleware.MustLogin(), middleware.MustAuthorizer(rbac.Casbin))
+	{
+		//dictMgrGroup.POST("/list", controller.ListDicts)
+		dictMgrGroup.POST("/add", controller.AddDict)
+		dictMgrGroup.POST("/update", controller.UpdateDict)
+		dictMgrGroup.POST("/del", controller.DelDict)
+	}
+
 }

@@ -3,7 +3,7 @@ package training;
 import "commonForm.proto";
 import "accountForm.proto";
 import  "menuForm.proto";
-
+import "resForm.proto";
 //  --------------------------    方法定义  -----------------------------
 service BackendGrpc {
   //----------------  account -------------------------
@@ -14,4 +14,9 @@ service BackendGrpc {
   rpc QueryAllMenus(MenuQueryReq) returns (MenuListRes) {}
   // 获得单个菜单
   rpc FetchMenu(MenuQueryReq) returns (MenuRes) {}
+
+  //--------------  res ---------------------------------
+  // 初始化接口
+  rpc InitRes(InitResourceReq) returns (ResourcesRes) {}
+
 }

@@ -52,8 +52,8 @@ func QueryMyMenu(c *gin.Context) {
 
 }
 
-// @Summary 菜单管理
-// @Description 查询管理端菜单列表
+// @Summary menu:list
+// @Description 菜单管理|查询菜单列表
 // @Tags MenuMgr
 // @Accept json
 // @Produce json
@@ -93,7 +93,7 @@ func QueryAllMenus(c *gin.Context) {
 }
 
 // @Summary 菜单管理
-// @Description 查询管理端菜单
+// @Description 菜单管理|查询菜单
 // @Tags MenuMgr
 // @Accept json
 // @Produce json
@@ -129,7 +129,7 @@ func FetchMenu(c *gin.Context) {
 }
 
 // @Summary 菜单管理
-// @Description 新增菜单
+// @Description 菜单管理|新增菜单
 // @Tags MenuMgr
 // @Accept json
 // @Produce json
@@ -144,7 +144,7 @@ func AddMenu(c *gin.Context) {
 }
 
 // @Summary 菜单管理
-// @Description 编辑菜单
+// @Description 菜单管理|编辑菜单
 // @Tags MenuMgr
 // @Accept json
 // @Produce json
@@ -159,7 +159,7 @@ func UpdateMenu(c *gin.Context) {
 }
 
 // @Summary 菜单管理
-// @Description 删除菜单
+// @Description 菜单管理|删除菜单
 // @Tags MenuMgr
 // @Accept json
 // @Produce json

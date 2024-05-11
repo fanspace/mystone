@@ -1,0 +1,37 @@
+syntax = "proto3";
+package training;
+import "commonForm.proto";
+
+
+
+message Resource {
+  int64       Id    = 1;
+  string      Name     = 2;
+  string      Url      = 3;
+  string      Act        = 4;
+  int64       Pid         = 5;
+  bool        IsLeaf        = 6;
+  string      Domain      = 7;
+  string      Remark      = 8;
+  repeated  Resource     children = 9;
+  string     GroupName        = 10;
+  int32      Level         = 11;
+  int32      Version       = 12;
+  string      NameCn     = 13;
+}
+
+
+message InitResourceReq {
+  repeated Resource  ResCate = 1;
+  repeated Resource  ResItem = 2;
+}
+
+
+message ResourcesRes {
+  repeated Resource  Resources = 1;
+}
+
+
+
+
+
