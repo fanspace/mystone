@@ -4,6 +4,7 @@ import (
 	accsrv "backend/apps/account/service"
 	"backend/apps/res/service"
 	log "backend/logger"
+	"backend/utils"
 	"context"
 	"errors"
 	"fmt"
@@ -59,10 +60,9 @@ func TokenInterceptor() grpc.UnaryServerInterceptor {
 		req interface{},
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler) (interface{}, error) {
-		log.Error("---------> the unaryServerInterceptor: " + info.FullMethod)
-
 		err := authToken(ctx, info.FullMethod)
 		if err != nil {
+			log.Error("---------> the unaryServerInterceptor: " + err.Error())
 			return nil, err
 		}
 		return handler(ctx, req)
@@ -92,5 +92,9 @@ func authToken(ctx context.Context, fullmethod string) error {
 	}*/
 
 	fmt.Println(appid, appkey)
+	nouns := utils.EncryptGrpcCredentials(appid)
+	if nouns != appkey {
+		return errors.New("backend grpc token authenticate failed")
+	}
 	return nil
 }
