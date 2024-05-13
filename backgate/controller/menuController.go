@@ -54,7 +54,7 @@ func QueryMyMenu(c *gin.Context) {
 
 // @Summary menu:list
 // @Description 菜单管理|查询菜单列表
-// @Tags MenuMgr
+// @Tags menuMgr
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
@@ -92,9 +92,9 @@ func QueryAllMenus(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": true, "msg": "", "data": datas, "datetime": res.(*pb.MenuListRes).Total})
 }
 
-// @Summary 菜单管理
+// @Summary menu:get
 // @Description 菜单管理|查询菜单
-// @Tags MenuMgr
+// @Tags menuMgr
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
@@ -128,9 +128,9 @@ func FetchMenu(c *gin.Context) {
 	return
 }
 
-// @Summary 菜单管理
+// @Summary menu:add
 // @Description 菜单管理|新增菜单
-// @Tags MenuMgr
+// @Tags menuMgr
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
@@ -143,9 +143,9 @@ func AddMenu(c *gin.Context) {
 	return
 }
 
-// @Summary 菜单管理
+// @Summary menu:update
 // @Description 菜单管理|编辑菜单
-// @Tags MenuMgr
+// @Tags menuMgr
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
@@ -158,9 +158,9 @@ func UpdateMenu(c *gin.Context) {
 	return
 }
 
-// @Summary 菜单管理
+// @Summary menu:del
 // @Description 菜单管理|删除菜单
-// @Tags MenuMgr
+// @Tags menuMgr
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth

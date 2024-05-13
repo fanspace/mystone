@@ -18,7 +18,7 @@ type Resource struct {
 	Act       string      `json:"act"  xorm:"not null VARCHAR(32)"`
 	Pid       int64       `json:"pid" xorm:"not null BIGINT(20)"`
 	IsLeaf    bool        `json:"isLeaf" xorm:"not null default 1 TINYINT(1)"`
-	Domain    string      `json:"domain"  xorm:"VARCHAR(255)"`
+	Domain    string      `json:"domain"  xorm:"VARCHAR(255) INDEX(grp_name_unique_idx)" `
 	Remark    string      `json:"remark"  xorm:"VARCHAR(255)"`
 	GroupName string      `json:"groupName" xorm:"not null VARCHAR(64) INDEX(grp_name_unique_idx)"`
 	Level     int32       `json:"level" xorm:"not null default 0 comment('层级') TINYINT(4)"`
@@ -30,9 +30,22 @@ type Resource struct {
 	Children  []*Resource `json:"children" xorm:"-"`
 }
 
+func (zr *Resource) HasResExist() (int64, error) {
+	has, err := db.Orm.Limit(0).Get(zr)
+	if err != nil {
+		log.Error(err.Error())
+		return 0, err
+	}
+	if !has {
+		return 0, nil
+	}
+
+	return zr.Id, nil
+}
+
 func (zr *Resource) InsertResorce() (int64, error) {
 	lastzr := new(Resource)
-	has, err := db.Orm.Where("`group` like ? ", zr.GroupName).And("domain like ?", zr.Domain).Desc("id").Limit(1).Get(lastzr)
+	has, err := db.Orm.Where("`group_name` like ? ", zr.GroupName).And("domain like ?", zr.Domain).Desc("id").Limit(1).Get(lastzr)
 	if err != nil {
 		return 0, err
 	}
@@ -45,10 +58,23 @@ func (zr *Resource) InsertResorce() (int64, error) {
 			return 0, err
 		}
 		if !has {
-			return 0, errors.New(relations.CUS_ERR_4004)
+			zr.Id = 101
 		}
 		zr.Id = ((lastdata.Id/100)+1)*100 + 1
 	}
+	if zr.Level > 1 && zr.Pid == 0 {
+		grpitem := new(Resource)
+		hasgrp, err := db.Orm.Where("`group_name` like ? ", zr.GroupName).And("domain like ?", zr.Domain).And("level = ?", 1).Desc("id").Limit(1).Get(grpitem)
+		if err != nil {
+			log.Error(err.Error())
+			return 0, err
+		}
+		if !hasgrp {
+			return 0, errors.New(relations.CUS_ERR_4004)
+		}
+		zr.Pid = grpitem.Id
+	}
+
 	_, err = db.Orm.Insert(zr)
 	if err != nil {
 		log.Error(err.Error())
@@ -118,9 +144,9 @@ func FindResourcesByPid(pid int64) ([]*Resource, error) {
 }
 
 // 根据gourpname  获得 该类主资源
-func GetParentZjResourcesByGrpName(grpname string) (*Resource, error) {
+func GetParentZjResourcesByGrpName(grpname, domain string) (*Resource, error) {
 	sm := new(Resource)
-	has, err := db.Orm.Where(" `group` like ? ", grpname).And("pid = ? ", 0).Get(sm)
+	has, err := db.Orm.Where(" `group_name` like ? ", grpname).And("domain like ?", domain).And("pid = ? ", 0).Get(sm)
 	if err != nil {
 		log.Error(err.Error())
 		return nil, err
@@ -186,6 +212,30 @@ func QueryResByUsid(usid int) ([]*Resource, error) {
 	}
 
 	return res, nil
+}
+
+func QueryResByConditions(req *Resource) (int64, []*Resource, error) {
+	res := make([]*Resource, 0)
+	session := db.Orm.Where("1=1")
+	if req.GroupName != "" {
+		session = session.And("group_name = ?", req.GroupName)
+	}
+	if req.Level != 0 {
+		session = session.And("level = ?", req.Level)
+	}
+
+	if req.Domain != "" {
+		session = session.And("domain = ?", req.Domain)
+	}
+	if req.Pid != -1 {
+		session = session.And("pid = ?", req.Pid)
+	}
+	total, err := session.OrderBy("created_at desc").FindAndCount(&res)
+	if err != nil {
+		log.Error(err.Error())
+		return 0, res, err
+	}
+	return total, res, nil
 }
 
 // 初始化资源

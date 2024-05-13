@@ -31,19 +31,16 @@ func AddMgrResFromSwagger(cates map[string]string, items []*Apitem) (*pb.Resourc
 		req.ResCate = append(req.ResCate, &pb.Resource{
 			Name:      strings.ToLower(tag[:len(tag)-3] + ":all"),
 			NameCn:    strings.Split(cates[tag], "|")[0],
-			Url:       tag + "/*",
+			Url:       "/" + tag + "/*",
 			Act:       "*",
 			Pid:       0,
 			IsLeaf:    false,
 			Domain:    "backend",
 			Remark:    "",
 			GroupName: tag,
-			Level:     0,
+			Level:     1,
 		})
 	}
-	fmt.Println("**********************************************************")
-	fmt.Println(req.ResCate)
-	fmt.Println("**********************************************************")
 
 	for _, item := range items {
 		fmt.Println(item)
@@ -58,7 +55,7 @@ func AddMgrResFromSwagger(cates map[string]string, items []*Apitem) (*pb.Resourc
 		}
 		req.ResItem = append(req.ResItem, &pb.Resource{
 			Name:      item.Name,
-			NameCn:    item.NameCn,
+			NameCn:    strings.Split(item.Descr, "|")[1],
 			Url:       item.Path,
 			Act:       item.HttpMethod,
 			Pid:       0,
@@ -66,12 +63,9 @@ func AddMgrResFromSwagger(cates map[string]string, items []*Apitem) (*pb.Resourc
 			Domain:    "backend",
 			Remark:    "",
 			GroupName: item.GrpName,
-			Level:     1,
+			Level:     2,
 		})
 	}
-	fmt.Println("**********************************************************")
-	fmt.Println(req.ResItem)
-	fmt.Println("**********************************************************")
 
 	res2, err := DealGrpcCall(req, "InitRes", "backendrpc")
 	if err != nil {
@@ -79,5 +73,6 @@ func AddMgrResFromSwagger(cates map[string]string, items []*Apitem) (*pb.Resourc
 		return res, err
 	}
 
+	fmt.Println(res2.(*pb.ResourcesRes))
 	return res2.(*pb.ResourcesRes), nil
 }

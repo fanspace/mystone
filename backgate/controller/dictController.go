@@ -8,7 +8,7 @@ import (
 
 // @Summary dict:add
 // @Description 字典管理|新增字典
-// @Tags DictMgr
+// @Tags dictMgr
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
@@ -23,7 +23,7 @@ func AddDict(c *gin.Context) {
 
 // @Summary dict:update
 // @Description 字典管理|编辑字典
-// @Tags DictMgr
+// @Tags dictMgr
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
@@ -38,7 +38,7 @@ func UpdateDict(c *gin.Context) {
 
 // @Summary dict:add
 // @Description 字典管理|删除字典
-// @Tags DictMgr
+// @Tags dictMgr
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth

@@ -2,19 +2,21 @@ package service
 
 import (
 	log "backgate/logger"
-	"encoding/json"
+	"backgate/relations"
+	pb "backgate/training"
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"strings"
 )
 
-func InitApis() (*ApiList, error) {
-	applist := new(ApiList)
+func InitApis() (*pb.ResourcesRes, error) {
+	pblist := new(pb.ResourcesRes)
 	yamlFile, err := ioutil.ReadFile("docs/swagger.yaml")
 	if err != nil {
 		log.Error("Error reading YAML file: " + err.Error())
-		return applist, err
+		return pblist, err
 	}
 
 	var swagger SwaggerSpec
@@ -52,44 +54,35 @@ func InitApis() (*ApiList, error) {
 			}
 		}
 	}
-	_, err = AddMgrResFromSwagger(interfacesByTag, apiList)
+	pbapilist, err := AddMgrResFromSwagger(interfacesByTag, apiList)
 	if err != nil {
 		log.Error("Error adding mgr res from swagger: " + err.Error())
 		return nil, err
 	}
-	if len(apiList) > 0 {
-		applist.Apis = apiList
-		jsoner, _ := json.Marshal(applist)
-		//fmt.Println(string(jsoner))
-		go func() {
-			err := SetSimpleKey("apiList", 0, string(jsoner))
-			if err != nil {
-				log.Error("Error setting simple key when init apis : " + err.Error())
-			}
-		}()
-	}
-	return applist, nil
+
+	go func() {
+		err := SetSimpleKey(fmt.Sprintf("%s_%s", relations.APP_NAME, "apiList"), 0, pbapilist)
+		if err != nil {
+			log.Error("Error setting simple key when init apis : " + err.Error())
+		}
+	}()
+
+	return pbapilist, nil
 }
 
-func ListAllApis() (*ApiList, error) {
-	res := new(ApiList)
-	tmpres, err := GetSimpleKeyWithoutTTL("apiList")
+// 获取缓存中的api列表
+func ListAllApis() (*pb.ResourcesRes, error) {
+	tmpres, err := GetSimpleKeyWithoutTTL(fmt.Sprintf("%s_%s", relations.APP_NAME, "apiList"))
 	if err != nil {
 		log.Error("Error getting simple key when list apis : " + err.Error())
 		return InitApis()
 
 	}
 
-	err = json.Unmarshal([]byte(tmpres.([]uint8)), res)
-	if err != nil {
-		log.Error("Error getting simple key when list apis : " + err.Error())
-		return InitApis()
-
-	}
-	for _, item := range res.Apis {
-		fmt.Println(item.GrpName, item.Path, item.HttpMethod)
-	}
-	return res, nil
+	res2 := new(pb.ResourcesRes)
+	err = proto.Unmarshal(tmpres.([]uint8), res2)
+	fmt.Println(res2)
+	return res2, nil
 }
 
 // SwaggerSpec 代表Swagger规范的简化结构，仅用于演示目的
@@ -125,8 +118,4 @@ type Apitem struct {
 	Name       string `json:"name"`
 	NameCn     string `json:"nameCn"`
 	Descr      string `json:"descr"`
-}
-
-type ApiList struct {
-	Apis []*Apitem `json:"apis"`
 }

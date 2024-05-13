@@ -87,11 +87,6 @@ func authToken(ctx context.Context, fullmethod string) error {
 		appkey = val[0]
 	}
 
-	/*if appid != relations.GRPC_TOKEN_APPID || appkey != core.GRPC_TOKEN_APPKEY {
-		return errors.New("Token认证信息无效")
-	}*/
-
-	fmt.Println(appid, appkey)
 	nouns := utils.EncryptGrpcCredentials(appid)
 	if nouns != appkey {
 		return errors.New("backend grpc token authenticate failed")

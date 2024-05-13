@@ -26,7 +26,7 @@ func ListApis(c *gin.Context) {
 
 // @Summary api:add
 // @Description 接口管理|新增接口
-// @Tags ApiMgr
+// @Tags apiMgr
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
@@ -41,7 +41,7 @@ func AddApi(c *gin.Context) {
 
 // @Summary api:update
 // @Description 接口管理|编辑接口
-// @Tags ApiMgr
+// @Tags apiMgr
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
@@ -56,7 +56,7 @@ func UpdateApi(c *gin.Context) {
 
 // @Summary api:del
 // @Description 接口管理|删除接口
-// @Tags ApiMgr
+// @Tags apiMgr
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
