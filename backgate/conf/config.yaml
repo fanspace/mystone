@@ -12,7 +12,7 @@ Database:
     QueryTimeout: 30
   DamengSettings:
     DriverName: "dm"
-    Url: "dm://ENLIST:abc123@DMRW?schema=ENLIST"
+    Url: "dm://PEIXUN:abc123456@DMRW?schema=PEIXUN"
   RedisSettings:
     Addr: "192.168.0.95:6379"
     DB: 6

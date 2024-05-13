@@ -28,3 +28,4 @@ conf/secrets.yaml
 training/
 logs/
 docs/
+dm/
