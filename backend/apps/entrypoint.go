@@ -48,6 +48,11 @@ func (ags BackendGrpcService) FetchMenu(ctx context.Context, in *pb.MenuQueryReq
 	return service.FetchMenu(in)
 }
 
+// 操作菜单
+func (ags BackendGrpcService) HandleMenu(ctx context.Context, in *pb.MenuHandleReq) (*pb.CommonResponse, error) {
+	return service.MutationMenu(in)
+}
+
 // 初始化接口
 func (ags BackendGrpcService) InitRes(ctx context.Context, in *pb.InitResourceReq) (*pb.ResourcesRes, error) {
 	return service.InitRes(in)

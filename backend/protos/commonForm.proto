@@ -15,4 +15,5 @@ enum Action{
   DELETE = 3;//删除
   FETCH = 4; // 获取单条
   LIST = 5; //获取多条
+  REMOVE = 9; //删除多条
 }

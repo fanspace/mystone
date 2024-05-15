@@ -29,7 +29,7 @@
 		</el-aside>
 		<el-container>
 			<el-main class="nopadding" style="padding:20px;" ref="main">
-				<save ref="save" :menu="menuList"></save>
+				<save ref="save" :menu="menuList" :formAction="dowhat"></save>
 			</el-main>
 		</el-container>
 	</el-container>
@@ -53,7 +53,8 @@
 						return data.meta.title
 					}
 				},
-				menuFilterText: ""
+				menuFilterText: "",
+				dowhat: ''
 			}
 		},
 		watch: {
@@ -77,6 +78,7 @@
 				var pid = node.level==1?undefined:node.parent.data.id;
 				this.$refs.save.setData(data, pid)
 				this.$refs.main.$el.scrollTop = 0
+				this.dowhat = 'edit'
 			},
 			//树过滤
 			menuFilterNode(value, data){
@@ -91,21 +93,29 @@
 			},
 			//增加
 			async add(node, data){
+				this.dowhat = 'add'
 				var newMenuName = "未命名" + newMenuIndex++;
 				var newMenuData = {
-					parentId: data ? data.id : "",
+					pid: data ? data.id : 0,
 					name: newMenuName,
 					path: "",
 					component: "",
+					domain: 'backend',
+					groupName: data ? data.groupName: '',
+					level: (data && data.id > 0) ? (data.level+1) : 0 ,
 					meta:{
 						title: newMenuName,
 						type: "menu"
 					}
 				}
 				this.menuloading = true
-				var res = await this.$API.demo.post.post(newMenuData)
+				var formdata = {
+					action: 1,
+					menu: newMenuData
+				}
+				var res = await this.$API.system.menu.add.post(formdata)
 				this.menuloading = false
-				newMenuData.id = res.data
+				newMenuData.id = res.id
 
 				this.$refs.menu.append(newMenuData, node)
 				this.$refs.menu.setCurrentKey(newMenuData.id)
@@ -114,12 +124,18 @@
 			},
 			//删除菜单
 			async delMenu(){
+				this.dowhat = 'del'
 				var CheckedNodes = this.$refs.menu.getCheckedNodes()
 				if(CheckedNodes.length == 0){
 					this.$message.warning("请选择需要删除的项")
 					return false;
 				}
-
+				var haschildren = this.checkHasChildren(CheckedNodes) 
+					if (haschildren) {
+						this.$message.warning('不能删除含有子菜单的菜单组')
+						return false
+					}
+				
 				var confirm = await this.$confirm('确认删除已选择的菜单吗？','提示', {
 					type: 'warning',
 					confirmButtonText: '删除',
@@ -133,10 +149,14 @@
 				var reqData = {
 					ids: CheckedNodes.map(item => item.id)
 				}
-				var res = await this.$API.demo.post.post(reqData)
+				var formdata = {
+					action: 9,
+					menuIds: reqData.ids
+				}
+				var res = await this.$API.system.menu.del.post(formdata)
 				this.menuloading = false
 
-				if(res.code == 200){
+				if(res.success){
 					CheckedNodes.forEach(item => {
 						var node = this.$refs.menu.getNode(item)
 						if(node.isCurrent){
@@ -147,7 +167,16 @@
 				}else{
 					this.$message.warning(res.message)
 				}
+			},
+			checkHasChildren(cn) {
+				for (var it of cn) {
+					if (it.children && it.children.length > 0) {
+						return true
+					}
+				}
+				return false
 			}
+			
 		}
 	}
 </script>

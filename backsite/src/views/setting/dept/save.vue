@@ -1,8 +1,8 @@
 <template>
 	<el-dialog :title="titleMap[mode]" v-model="visible" :width="500" destroy-on-close @closed="$emit('closed')">
 		<el-form :model="form" :rules="rules" :disabled="mode=='show'" ref="dialogForm" label-width="100px">
-			<el-form-item label="上级部门" prop="parentId">
-				<el-cascader v-model="form.parentId" :options="groups" :props="groupsProps" :show-all-levels="false" clearable style="width: 100%;"></el-cascader>
+			<el-form-item label="上级部门" prop="pid">
+				<el-cascader v-model="form.pid" :options="groups" :props="groupsProps" :show-all-levels="false" clearable style="width: 100%;"></el-cascader>
 			</el-form-item>
 			<el-form-item label="部门名称" prop="label">
 				<el-input v-model="form.label" placeholder="请输入部门名称" clearable></el-input>
@@ -40,7 +40,7 @@
 				//表单数据
 				form: {
 					id:"",
-					parentId: "",
+					pid: "",
 					label: "",
 					sort: 1,
 					status: "1",
@@ -102,7 +102,7 @@
 				this.form.label = data.label
 				this.form.status = data.status
 				this.form.sort = data.sort
-				this.form.parentId = data.parentId
+				this.form.pid = data.pid
 				this.form.remark = data.remark
 
 				//可以和上面一样单个注入，也可以像下面一样直接合并进去

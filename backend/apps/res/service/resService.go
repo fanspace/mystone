@@ -5,6 +5,7 @@ import (
 	log "backend/logger"
 	pb "backend/training"
 	"errors"
+	"fmt"
 	"github.com/jinzhu/copier"
 )
 
@@ -71,13 +72,18 @@ func readResMulti(req *pb.InitResourceReq) (*pb.ResourcesRes, error) {
 		}
 		pbcate := new(pb.Resource)
 		err = copier.Copy(pbcate, cate)
+		fmt.Println("ssssssssssssssssssssssssssssssssssssssssss")
+		fmt.Println(pbcate)
 		pbcate.Children = make([]*pb.Resource, 0)
-		reslist, err := FindResourcesByPid(cate.Id)
+		reslist, err := FindResourcesByPid(pbcate.Id)
 		if err != nil {
 			log.Error(err.Error())
 			continue
 		}
+		fmt.Println("########################################")
+		fmt.Println(reslist)
 		if len(reslist) > 0 {
+			fmt.Println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 			for _, v := range reslist {
 				pbitem := new(pb.Resource)
 				err = copier.Copy(pbitem, v)
@@ -91,5 +97,7 @@ func readResMulti(req *pb.InitResourceReq) (*pb.ResourcesRes, error) {
 		res.Resources = append(res.Resources, pbcate)
 
 	}
+
+	fmt.Println(res)
 	return res, nil
 }

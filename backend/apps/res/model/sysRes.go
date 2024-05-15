@@ -62,9 +62,9 @@ func (zr *Resource) InsertResorce() (int64, error) {
 		}
 		zr.Id = ((lastdata.Id/100)+1)*100 + 1
 	}
-	if zr.Level > 1 && zr.Pid == 0 {
+	if zr.Level > 0 && zr.Pid == 0 {
 		grpitem := new(Resource)
-		hasgrp, err := db.Orm.Where("`group_name` like ? ", zr.GroupName).And("domain like ?", zr.Domain).And("level = ?", 1).Desc("id").Limit(1).Get(grpitem)
+		hasgrp, err := db.Orm.Where("`group_name` like ? ", zr.GroupName).And("domain like ?", zr.Domain).And("level = ?", 0).Desc("id").Limit(1).Get(grpitem)
 		if err != nil {
 			log.Error(err.Error())
 			return 0, err

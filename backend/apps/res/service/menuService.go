@@ -49,11 +49,11 @@ func QueryAuthMenus(req *pb.UserAuthMenuListReq) (*pb.MenuListRes, error) {
 		//todo
 		//  get  menu groups  from   rbacRpc
 		//
-		menureq := new(pb.AuthMenuReq)
-		menureq.Domain = req.Domain
-		menureq.Roles = req.Roles
-		menureq.Usid = req.Usid
-		menulist, err := QueryMenusByRole(menureq)
+		MenuHandleReq := new(pb.AuthMenuReq)
+		MenuHandleReq.Domain = req.Domain
+		MenuHandleReq.Roles = req.Roles
+		MenuHandleReq.Usid = req.Usid
+		menulist, err := QueryMenusByRole(MenuHandleReq)
 		if err != nil {
 			log.Error(err.Error())
 			return res, err
@@ -222,18 +222,29 @@ func recurMenuVmById(id int64, domain string) (*pb.MenuRes, error) {
 	return pmenu, nil
 }
 
-func MutationMenu(req *pb.MenuReq) (*pb.CommonResponse, error) {
+func MutationMenu(req *pb.MenuHandleReq) (*pb.CommonResponse, error) {
 	res := new(pb.CommonResponse)
-	//menu, _ := convertProto2MenuEntity(req.Menu)
+	if req.Action >= 1 && req.Action <= 3 && req.Menu == nil {
+		fmt.Println("222222222222")
+		return res, errors.New(relations.CUS_ERR_4002)
+	}
+	if req.Action == 9 && len(req.MenuIds) == 0 {
+		fmt.Println("33333333333333333333")
+		return res, errors.New(relations.CUS_ERR_4002)
+	}
 	menu := new(MenuEntity)
-	copier.Copy(menu, req.Menu)
-	menu.Redirect = req.Menu.Redirect
-	menu.MetaNocache = req.Menu.Meta.NoCache
-	menu.MetaIcon = req.Menu.Meta.Icon
-	menu.MetaTitle = req.Menu.Meta.Title
+	if req.Action != pb.Action_REMOVE {
+		copier.Copy(menu, req.Menu)
+		menu.Redirect = req.Menu.Redirect
+		menu.MetaNocache = req.Menu.Meta.NoCache
+		menu.MetaIcon = req.Menu.Meta.Icon
+		menu.MetaTitle = req.Menu.Meta.Title
+		menu.MetaType = req.Menu.Meta.Type
+	}
+
 	switch req.Action {
 	case pb.Action_NEW:
-		if menu.Path == "" || menu.Name == "" || menu.Domain == "" {
+		if menu.Name == "" || menu.Domain == "" {
 			//res.Success = false
 			//res.Msg = common.CUS_ERR_4002
 			return nil, errors.New(relations.CUS_ERR_4002)
@@ -281,6 +292,18 @@ func MutationMenu(req *pb.MenuReq) (*pb.CommonResponse, error) {
 		}
 		go DeteleBindByMenuId(menu.Id)
 		res.Id = menu.Id
+	case pb.Action_REMOVE:
+		if len(req.MenuIds) == 0 {
+			return nil, errors.New(relations.CUS_ERR_4002)
+		}
+		for _, v := range req.MenuIds {
+			err := DeleteMenuById(v)
+			if err != nil {
+				return nil, errors.New(err.Error())
+			}
+			go DeteleBindByMenuId(v)
+		}
+
 	default:
 		//res.Success = false
 		//res.Msg = common.CUS_ERR_4002
@@ -333,7 +356,7 @@ func updateMenuSrv(menu *MenuEntity) error {
 	if len(children) > 0 && menu.IsLeaf {
 		return errors.New(relations.CUS_ERR_4016)
 	}
-	if menu.Group != oldmenu.Group {
+	if menu.GroupName != oldmenu.GroupName {
 		err = batchUpdateMenuGroup(menu)
 		if err != nil {
 			return err
@@ -354,7 +377,7 @@ func updateMenuSrv(menu *MenuEntity) error {
 }
 
 func batchUpdateMenuGroup(menu *MenuEntity) error {
-	if menu.Group == "" {
+	if menu.GroupName == "" {
 		return errors.New(relations.CUS_ERR_1008)
 	}
 	session := db.Orm.NewSession()
@@ -380,8 +403,8 @@ func batchUpdateMenuGroup(menu *MenuEntity) error {
 		log.Error(err.Error())
 		return err
 	}
-	sql := "update zj_menu_entity set `group` = ? where pid =  ? and pid > 0 "
-	_, err = session.Exec(sql, menu.Group, menu.Id)
+	sql := "update menu_entity set `group_name` = ? where pid =  ? and pid > 0 "
+	_, err = session.Exec(sql, menu.GroupName, menu.Id)
 	if err != nil {
 		session.Rollback()
 		log.Error(err.Error())
@@ -530,7 +553,7 @@ func findMenusByGrpNameAndConds(grpname string, ids string, domain string) (*pb.
 			return nil, err
 		}
 		for _, v := range menuarr {
-			if v.Group == grpname && v.Pid == rootmenu.Id {
+			if v.GroupName == grpname && v.Pid == rootmenu.Id {
 				menu := new(pb.MenuRes)
 				meta := &pb.MenuMata{
 					Title:   v.MetaTitle,

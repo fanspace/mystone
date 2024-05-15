@@ -9,38 +9,46 @@ import (
 )
 
 type MenuEntity struct {
-	Id          int64  `json:"id" xorm:"not null pk autoincr comment('主键') BIGINT(20)"`
-	Name        string `json:"name" xorm:"not null default '' comment('名称') VARCHAR(100)"`
-	Path        string `json:"path" xorm:"not null default '' comment('路径') index VARCHAR(50)"`
-	Component   string `json:"component" xorm:"not null default '' comment('组件') VARCHAR(100)"`
-	Redirect    string `json:"redirect" xorm:"not null default '' comment('重定向') VARCHAR(200)"`
-	Url         string `json:"url" xorm:"not null default '' comment('url') VARCHAR(200)"`
-	MetaTitle   string `json:"meta_title" xorm:"not null default '' comment('meta标题') VARCHAR(50)"`
-	MetaIcon    string `json:"meta_icon" xorm:"not null default '' comment('meta icon') VARCHAR(50)"`
-	MetaNocache bool   `json:"meta_nocache" xorm:"not null default 0 comment('是否缓存（1:是 0:否）') TINYINT(1)"`
-	MetaType    string `json:"meta_type"`
-	Alwaysshow  bool   `json:"alwaysshow" xorm:"not null default 0 comment('是否总是显示（1:是0：否）') TINYINT(1)"`
-	MetaAffix   int    `json:"meta_affix" xorm:"not null default 0 comment('是否加固（1:是0：否）') TINYINT(1)"`
-	Type        int32  `json:"type" xorm:"not null default 2 comment('类型(1:固定,2:权限配置,3特殊)') TINYINT(4)"`
-	Hidden      bool   `json:"hidden" xorm:"not null default 0 comment('是否隐藏（0否1是）') TINYINT(1)"`
-	Pid         int64  `json:"pid" xorm:"not null default 0 comment('父ID') index(idx_list) INT(11)"`
-	Sort        int32  `json:"sort" xorm:"not null default 0 comment('排序') index(idx_list) INT(11)"`
-	Status      int32  `json:"status" xorm:"not null default 1 comment('状态（0禁止1启动）') index(idx_list) TINYINT(4)"`
-	Level       int32  `json:"level" xorm:"not null default 0 comment('层级') TINYINT(4)"`
-	IsLeaf      bool   `json:"isLeaf"  xorm:"not null default 1 comment('是否叶子节点（1:是 0:否）') TINYINT(1)"`
-	Domain      string `json:"domain"  xorm:"VARCHAR(255)"`
-	Group       string `json:"group" xorm:"VARCHAR(64)"`
-	Remark      string `json:"remark" xorm:"VARCHAR(500)"`
-	CreatedBy   int64  `json:"created_by" xorm:"BIGINT(20)"`
-	CreatedAt   int64  `xorm:"created"`
-	UpdatedBy   int64  `json:"updated_by" xorm:"BIGINT(20)"`
-	UpdatedAt   int64  `xorm:"updated"`
-	Version     int    `xorm:"version"`
+	Id               int64  `json:"id" xorm:"not null pk autoincr comment('主键') BIGINT(20)"`
+	Name             string `json:"name" xorm:"not null default '' comment('名称') VARCHAR(100)"`
+	Path             string `json:"path" xorm:"not null default '' comment('路径') index VARCHAR(50)"`
+	Component        string `json:"component" xorm:"not null default '' comment('组件') VARCHAR(100)"`
+	Redirect         string `json:"redirect" xorm:"not null default '' comment('重定向') VARCHAR(200)"`
+	Url              string `json:"url" xorm:"not null default '' comment('url') VARCHAR(200)"`
+	MetaTitle        string `json:"meta_title" xorm:"not null default '' comment('meta标题') VARCHAR(50)"`
+	MetaIcon         string `json:"meta_icon" xorm:"not null default '' comment('meta icon') VARCHAR(50)"`
+	MetaNocache      bool   `json:"meta_nocache" xorm:"not null default 0 comment('是否缓存（1:是 0:否）') TINYINT(1)"`
+	MetaType         string `json:"meta_type"`
+	Alwaysshow       bool   `json:"alwaysshow" xorm:"not null default 0 comment('是否总是显示（1:是0：否）') TINYINT(1)"`
+	MetaAffix        int    `json:"meta_affix" xorm:"not null default 0 comment('是否加固（1:是0：否）') TINYINT(1)"`
+	Type             int32  `json:"type" xorm:"not null default 2 comment('类型(1:固定,2:权限配置,3特殊)') TINYINT(4)"`
+	Hidden           bool   `json:"hidden" xorm:"not null default 0 comment('是否隐藏（0否1是）') TINYINT(1)"`
+	HiddenBreadcrumb bool   `json:"hidden_breadcrumb" xorm:"not null default 0 comment('是否隐藏面包屑（0否1是）') TINYINT(1)"`
+	Pid              int64  `json:"pid" xorm:"not null default 0 comment('父ID') index(idx_list) INT(11)"`
+	Sort             int32  `json:"sort" xorm:"not null default 0 comment('排序') index(idx_list) INT(11)"`
+	Status           int32  `json:"status" xorm:"not null default 1 comment('状态（0禁止1启动）') index(idx_list) TINYINT(4)"`
+	Level            int32  `json:"level" xorm:"not null default 0 comment('层级') TINYINT(4)"`
+	IsLeaf           bool   `json:"isLeaf"  xorm:"not null default 1 comment('是否叶子节点（1:是 0:否）') TINYINT(1)"`
+	Domain           string `json:"domain"  xorm:"VARCHAR(255)"`
+	GroupName        string `json:"groupName" xorm:"VARCHAR(64)"`
+	Remark           string `json:"remark" xorm:"VARCHAR(500)"`
+	CreatedBy        int64  `json:"created_by" xorm:"BIGINT(20)"`
+	CreatedAt        int64  `xorm:"created"`
+	UpdatedBy        int64  `json:"updated_by" xorm:"BIGINT(20)"`
+	UpdatedAt        int64  `xorm:"updated"`
+	Version          int    `xorm:"version"`
+	//高亮
+	Active string `json:"active"`
+	//整页路由
+	Fullpage bool `json:"fullpage"`
+
+	Color string `json:"color"`
+	Tag   string `json:"tag"`
 }
 
 func (sm *MenuEntity) InsertMenu() (int64, error) {
 	lastmenu := new(MenuEntity)
-	has, err := db.Orm.Where("`group` like ? ", sm.Group).And("domain like ?", sm.Domain).Desc("id").Limit(1).Get(lastmenu)
+	has, err := db.Orm.Where("`group_name` like ? ", sm.GroupName).And("domain like ?", sm.Domain).Desc("id").Limit(1).Get(lastmenu)
 	if err != nil {
 		return 0, err
 	}
@@ -90,7 +98,7 @@ func GetMenuById(id int64) (*MenuEntity, error) {
 
 func GetParentMenuByGrpName(grpname string, domain string) (*MenuEntity, error) {
 	sm := new(MenuEntity)
-	has, err := db.Orm.Where("`group` like ? ", grpname).And("pid = ? ", 0).And("domain like ?", domain).Get(sm)
+	has, err := db.Orm.Where("`group_name` like ? ", grpname).And("pid = ? ", 0).And("domain like ?", domain).Get(sm)
 	if err != nil {
 		log.Error(err.Error())
 		return nil, err
@@ -189,7 +197,7 @@ func InitMenuData() error {
 			Level:       0,
 			IsLeaf:      false,
 			Domain:      "back",
-			Group:       "sysMgr",
+			GroupName:   "sysMgr",
 			Remark:      "",
 			CreatedBy:   0,
 			CreatedAt:   1601022296,
@@ -217,7 +225,7 @@ func InitMenuData() error {
 			Level:       1,
 			IsLeaf:      true,
 			Domain:      "back",
-			Group:       "sysMgr",
+			GroupName:   "sysMgr",
 			Remark:      "",
 			CreatedBy:   0,
 			CreatedAt:   1601022296,
@@ -245,7 +253,7 @@ func InitMenuData() error {
 			Level:       1,
 			IsLeaf:      true,
 			Domain:      "back",
-			Group:       "sysMgr",
+			GroupName:   "sysMgr",
 			Remark:      "",
 			CreatedBy:   0,
 			CreatedAt:   1601022296,
@@ -273,7 +281,7 @@ func InitMenuData() error {
 			Level:       1,
 			IsLeaf:      true,
 			Domain:      "back",
-			Group:       "sysMgr",
+			GroupName:   "sysMgr",
 			Remark:      "",
 			CreatedBy:   0,
 			CreatedAt:   1601022296,
@@ -301,7 +309,7 @@ func InitMenuData() error {
 			Level:       1,
 			IsLeaf:      true,
 			Domain:      "back",
-			Group:       "sysMgr",
+			GroupName:   "sysMgr",
 			Remark:      "",
 			CreatedBy:   0,
 			CreatedAt:   1601022296,
@@ -330,7 +338,7 @@ func InitMenuData() error {
 			Level:       0,
 			IsLeaf:      false,
 			Domain:      "back",
-			Group:       "rbacMgr",
+			GroupName:   "rbacMgr",
 			Remark:      "",
 			CreatedBy:   0,
 			CreatedAt:   1601022296,
@@ -359,7 +367,7 @@ func InitMenuData() error {
 			Level:       1,
 			IsLeaf:      true,
 			Domain:      "back",
-			Group:       "rbacMgr",
+			GroupName:   "rbacMgr",
 			Remark:      "",
 			CreatedBy:   0,
 			CreatedAt:   1601022296,
@@ -387,7 +395,7 @@ func InitMenuData() error {
 			Level:       1,
 			IsLeaf:      true,
 			Domain:      "back",
-			Group:       "rbacMgr",
+			GroupName:   "rbacMgr",
 			Remark:      "",
 			CreatedBy:   0,
 			CreatedAt:   1601022296,
@@ -415,7 +423,7 @@ func InitMenuData() error {
 			Level:       1,
 			IsLeaf:      true,
 			Domain:      "back",
-			Group:       "rbacMgr",
+			GroupName:   "rbacMgr",
 			Remark:      "",
 			CreatedBy:   0,
 			CreatedAt:   1601022296,
@@ -443,7 +451,7 @@ func InitMenuData() error {
 			Level:       1,
 			IsLeaf:      true,
 			Domain:      "back",
-			Group:       "rbacMgr",
+			GroupName:   "rbacMgr",
 			Remark:      "",
 			CreatedBy:   0,
 			CreatedAt:   1601022296,
@@ -471,7 +479,7 @@ func InitMenuData() error {
 			Level:       1,
 			IsLeaf:      true,
 			Domain:      "back",
-			Group:       "rbacMgr",
+			GroupName:   "rbacMgr",
 			Remark:      "",
 			CreatedBy:   0,
 			CreatedAt:   1601022296,
@@ -499,7 +507,7 @@ func InitMenuData() error {
 			Level:       1,
 			IsLeaf:      true,
 			Domain:      "back",
-			Group:       "rbacMgr",
+			GroupName:   "rbacMgr",
 			Remark:      "",
 			CreatedBy:   0,
 			CreatedAt:   1601022296,

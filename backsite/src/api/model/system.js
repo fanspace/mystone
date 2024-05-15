@@ -18,11 +18,41 @@ export default {
 			}
 		},
 		list: {
-			url: `${config.API_URL}/system/menu/list`,
+			url: `${config.BACKEND_API_URL}/menuMgr/list`,
 			name: "获取菜单",
 			get: async function(){
 				return await http.get(this.url);
 			}
+		},
+	    add: {
+		    url: `${config.BACKEND_API_URL}/menuMgr/add`,
+		    name: "add菜单",
+		    post: async function(data={}){
+			 return await http.post(this.url, data);
+		    }
+	    },
+	    update: {
+	        url: `${config.BACKEND_API_URL}/menuMgr/update`,
+	        name: "edit菜单",
+	        post: async function(data={}){
+		    return await http.post(this.url, data);
+	        }
+        },
+        del: {
+            url: `${config.BACKEND_API_URL}/menuMgr/del`,
+            name: "delete菜单",
+            post: async function(data={}){
+	        return await http.post(this.url, data);
+            }
+        }
+	},
+	api:{
+		apiTree: {
+			url: `${config.BACKEND_API_URL}/apiMgr/list`,
+			name: "获取Api_Tree",
+			getp: async function(params){
+			return await http.getp(this.url, params);
+		}
 		}
 	},
 	dic: {

@@ -4,8 +4,10 @@ import (
 	log "backgate/logger"
 	"backgate/relations"
 	pb "backgate/training"
+	"backgate/viewmodel"
 	"fmt"
 	"github.com/golang/protobuf/proto"
+	"github.com/jinzhu/copier"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"strings"
@@ -59,9 +61,12 @@ func InitApis() (*pb.ResourcesRes, error) {
 		log.Error("Error adding mgr res from swagger: " + err.Error())
 		return nil, err
 	}
-
 	go func() {
-		err := SetSimpleKey(fmt.Sprintf("%s_%s", relations.APP_NAME, "apiList"), 0, pbapilist)
+		jsonstr, err := proto.Marshal(pbapilist)
+		if err != nil {
+			log.Error(err.Error())
+		}
+		err = SetSimpleKey(fmt.Sprintf("%s_%s", relations.APP_NAME, "apiList"), 0, jsonstr)
 		if err != nil {
 			log.Error("Error setting simple key when init apis : " + err.Error())
 		}
@@ -78,11 +83,40 @@ func ListAllApis() (*pb.ResourcesRes, error) {
 		return InitApis()
 
 	}
-
 	res2 := new(pb.ResourcesRes)
-	err = proto.Unmarshal(tmpres.([]uint8), res2)
-	fmt.Println(res2)
+	err = proto.Unmarshal(tmpres.([]byte), res2)
 	return res2, nil
+}
+
+func RetrieveApiTree(pid int64) ([]*viewmodel.ApiTree, error) {
+	res := make([]*viewmodel.ApiTree, 0)
+	apilist, err := ListAllApis()
+	if err != nil {
+		log.Error(err.Error())
+		return res, err
+	}
+
+	if pid == 0 {
+		for _, v := range apilist.Resources {
+			at := new(viewmodel.ApiTree)
+			err = copier.Copy(at, v)
+			res = append(res, at)
+		}
+	} else {
+		for _, v := range apilist.Resources {
+			fmt.Println(v.Children)
+			if v.Id == pid && len(v.Children) > 0 {
+				for _, k := range v.Children {
+					at := new(viewmodel.ApiTree)
+					err = copier.Copy(at, k)
+					fmt.Println(at)
+					res = append(res, at)
+				}
+			}
+		}
+	}
+
+	return res, nil
 }
 
 // SwaggerSpec 代表Swagger规范的简化结构，仅用于演示目的

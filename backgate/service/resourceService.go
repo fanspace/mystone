@@ -38,7 +38,7 @@ func AddMgrResFromSwagger(cates map[string]string, items []*Apitem) (*pb.Resourc
 			Domain:    "backend",
 			Remark:    "",
 			GroupName: tag,
-			Level:     1,
+			Level:     0,
 		})
 	}
 
@@ -63,7 +63,7 @@ func AddMgrResFromSwagger(cates map[string]string, items []*Apitem) (*pb.Resourc
 			Domain:    "backend",
 			Remark:    "",
 			GroupName: item.GrpName,
-			Level:     2,
+			Level:     1,
 		})
 	}
 

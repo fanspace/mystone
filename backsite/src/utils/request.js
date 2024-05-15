@@ -107,12 +107,18 @@ var http = {
 	 * @param  {object} config 参数
 	 */
 	getp: function(url, params={}) {
+		console.log(url)
+		console.log('---------------------------------')
+		console.log(params)
 		return new Promise((resolve, reject) => {
 			if(params.length > 0 ) {
 				params.forEach(element => {
-					url = url + '/' + element
+					url = url + '/' + (element+'')
 				});
+			} else {
+				url = url + '/' + (params+'')
 			}
+			
 			params = {t: new Date().getTime()}
 			axios({
 				method: 'get',

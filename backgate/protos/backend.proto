@@ -14,7 +14,8 @@ service BackendGrpc {
   rpc QueryAllMenus(MenuQueryReq) returns (MenuListRes) {}
   // 获得单个菜单
   rpc FetchMenu(MenuQueryReq) returns (MenuRes) {}
-
+  // 操作菜单
+  rpc HandleMenu(MenuHandleReq) returns (CommonResponse) {}
   //--------------  res ---------------------------------
   rpc InitRes(InitResourceReq) returns (ResourcesRes) {}
 

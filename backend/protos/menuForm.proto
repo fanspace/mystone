@@ -31,8 +31,16 @@ message MenuRes {
   repeated MenuRes Children = 13;
   string    NameCn   = 14;
   string    Domain    = 15;
-  string    Group    = 16;
+  string    GroupName    = 16;
   int32      Version       = 17;
+  bool  HiddenBreadcrumb  = 18;
+  bool  Fullpage  = 19;
+  string      Active = 20;
+  string    Color  = 21;
+  string    Tag  = 22;
+
+  repeated  MenuApiItem  ApiList = 23;
+  bool      ApiUpdated = 24;
 }
 
 //MenuMata
@@ -48,12 +56,18 @@ message MenuListRes {
   int64      Total        = 2;
 }
 
+message MenuApiItem{
+  int64   Id     = 1;
+  string  Name   = 2;
+  string  Url    = 3;
+}
 
-
-message MenuReq {
+message MenuHandleReq {
   Action Action = 1;
   MenuRes  Menu = 2;
   int64    Operator = 3;
+  // 批量移除
+  repeated int64  MenuIds = 4;
 }
 
 message UserAuthMenuListReq {

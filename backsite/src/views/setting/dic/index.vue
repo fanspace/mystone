@@ -144,8 +144,8 @@
 				this.dialog.dic = true
 				this.$nextTick(() => {
 					var editNode = this.$refs.dic.getNode(data.id);
-					var editNodeParentId =  editNode.level==1?undefined:editNode.parent.data.id
-					data.parentId = editNodeParentId
+					var editNodepid =  editNode.level==1?undefined:editNode.parent.data.id
+					data.pid = editNodepid
 					this.$refs.dicDialog.open('edit').setData(data)
 				})
 			},
@@ -294,16 +294,16 @@
 						}
 						this.listApi = this.$API.dic.info;
 					}
-					this.$refs.dic.append(data, data.parentId[0])
+					this.$refs.dic.append(data, data.pid[0])
 					this.$refs.dic.setCurrentKey(data.id)
 				}else if(mode=='edit'){
 					var editNode = this.$refs.dic.getNode(data.id);
 					//判断是否移动？
-					var editNodeParentId =  editNode.level==1?undefined:editNode.parent.data.id
-					if(editNodeParentId != data.parentId){
+					var editNodepid =  editNode.level==1?undefined:editNode.parent.data.id
+					if(editNodepid != data.pid){
 						var obj = editNode.data;
 						this.$refs.dic.remove(data.id)
-						this.$refs.dic.append(obj, data.parentId[0])
+						this.$refs.dic.append(obj, data.pid[0])
 					}
 					Object.assign(editNode.data, data)
 				}

@@ -10,6 +10,7 @@ import (
 	"github.com/casbin/xorm-adapter/v3"
 	"github.com/go-redis/redis/v8"
 	_ "github.com/go-sql-driver/mysql"
+	_ "mydm"
 	"os"
 	"strings"
 	"time"
@@ -21,6 +22,8 @@ var (
 
 func InitCasbin() {
 	a, err := xormadapter.NewAdapter("mysql", settings.Cfg.Database.MysqlSettings.Url, true)
+	//a, err := xormadapter.NewAdapter("dm", settings.Cfg.Database.DamengSettings.Url, true)
+
 	if err != nil {
 		fmt.Println("Casbin init error")
 		log.Error(err.Error())

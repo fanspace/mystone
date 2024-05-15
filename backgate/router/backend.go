@@ -29,7 +29,7 @@ func initBackendRouter(router *gin.Engine) {
 	menuMgrGroup := router.Group(prefix + "/menuMgr")
 	menuMgrGroup.Use(middleware.MustLogin(), middleware.MustAuthorizer(rbac.Casbin))
 	{
-		menuMgrGroup.POST("/list", controller.QueryAllMenus)
+		menuMgrGroup.GET("/list", controller.QueryAllMenus)
 		menuMgrGroup.POST("/query", controller.FetchMenu)
 		menuMgrGroup.POST("/add", controller.AddMenu)
 		menuMgrGroup.POST("/update", controller.UpdateMenu)
@@ -40,6 +40,7 @@ func initBackendRouter(router *gin.Engine) {
 	apiMgrGroup.Use(middleware.MustLogin(), middleware.MustAuthorizer(rbac.Casbin))
 	{
 		apiMgrGroup.POST("/list", controller.ListApis)
+		apiMgrGroup.GET("/list/:pid", controller.ListApiByPid)
 		apiMgrGroup.POST("/add", controller.AddApi)
 		apiMgrGroup.POST("/update", controller.UpdateApi)
 		apiMgrGroup.POST("/del", controller.DelApi)

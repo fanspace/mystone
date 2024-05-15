@@ -58,20 +58,17 @@ func QueryMyMenu(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param req body training.MenuQueryReq true "query menu List"
 // @Success 200 {object} map[string]any
-// @Router /menuMgr/list [post]
+// @Router /menuMgr/list [get]
 // @Date   9/17/2020 10:58 AM
 func QueryAllMenus(c *gin.Context) {
 	req := new(pb.MenuQueryReq)
-	if err := c.ShouldBindJSON(req); err != nil {
-		log.Error(err.Error())
-		c.JSON(http.StatusOK, gin.H{"code": 4002, "success": false, "msg": relations.CUS_ERR_4002})
-		return
-	}
-	if !slice.Contain(relations.DOMAINS_LIMITED, req.Domain) {
-		c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": false, "msg": relations.CUS_ERR_4008})
-		return
+	req.Type = 0
+	req.Domain = "backend"
+	mc := c.MustGet("mc").(*utils.MyClaim)
+	isRoot, _ := rbac.Casbin.HasRoleForUser(mc.Username, "root")
+	if isRoot {
+		req.Type = 0
 	}
 
 	res, err := service.DealGrpcCall(req, "QueryAllMenus", "backendrpc")
@@ -85,11 +82,8 @@ func QueryAllMenus(c *gin.Context) {
 			return
 		}
 	}
-	datas := new(viewmodel.MenuResList)
-	datas.Menu = res.(*pb.MenuListRes).Menus
-	datas.DashboardGrid = []string{"welcome", "ver", "time", "progress", "echarts", "about"}
-	datas.Permissions = []string{"list.add", "list.edit", "list.delete", "user.add", "user.edit", "user.delete"}
-	c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": true, "msg": "", "data": datas, "datetime": res.(*pb.MenuListRes).Total})
+
+	c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": true, "msg": "", "data": res.(*pb.MenuListRes).Menus, "datetime": res.(*pb.MenuListRes).Total})
 }
 
 // @Summary menu:get
@@ -134,13 +128,12 @@ func FetchMenu(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param req body training.MenuQueryReq true "query menu By Id"
+// @Param req body training.MenuHandleReq true " "
 // @Success 200 {object} map[string]any
 // @Router /menuMgr/add [post]
 // @Date   9/21/2020 10:58 AM
 func AddMenu(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": true, "data": ""})
-	return
+	dealMenu(c)
 }
 
 // @Summary menu:update
@@ -149,13 +142,12 @@ func AddMenu(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param req body training.MenuQueryReq true "query menu By Id"
+// @Param req body training.MenuHandleReq true " "
 // @Success 200 {object} map[string]any
 // @Router /menuMgr/update [post]
 // @Date   9/21/2020 10:58 AM
 func UpdateMenu(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": true, "data": ""})
-	return
+	dealMenu(c)
 }
 
 // @Summary menu:del
@@ -164,11 +156,32 @@ func UpdateMenu(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param req body training.MenuQueryReq true "query menu By Id"
+// @Param req body training.MenuHandleReq true " "
 // @Success 200 {object} map[string]any
 // @Router /menuMgr/del [post]
 // @Date   9/21/2020 10:58 AM
 func DelMenu(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": true, "data": ""})
+	dealMenu(c)
+}
+
+func dealMenu(c *gin.Context) {
+	req := new(pb.MenuHandleReq)
+	if err := c.ShouldBindJSON(req); err != nil {
+		log.Info(err.Error())
+		c.JSON(http.StatusOK, gin.H{"code": 4002, "success": false, "msg": relations.CUS_ERR_4002})
+		return
+	}
+	res, err := service.HandleMenus(req)
+	if err != nil {
+		if strings.Index(err.Error(), "desc =") > 0 {
+			msg := strings.Split(err.Error(), "desc = ")[1]
+			c.JSON(http.StatusOK, gin.H{"code": 99999, "success": false, "msg": msg})
+			return
+		} else {
+			c.JSON(http.StatusOK, gin.H{"code": 99999, "success": false, "msg": err.Error()})
+			return
+		}
+	}
+	c.JSON(http.StatusOK, gin.H{"code": relations.WEB_STATUS_BACK, "success": true, "id": res.Id})
 	return
 }

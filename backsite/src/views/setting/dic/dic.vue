@@ -7,8 +7,8 @@
 			<el-form-item label="字典名称" prop="name">
 				<el-input v-model="form.name" clearable placeholder="字典显示名称"></el-input>
 			</el-form-item>
-			<el-form-item label="父路径" prop="parentId">
-				<el-cascader v-model="form.parentId" :options="dic" :props="dicProps" :show-all-levels="false" clearable></el-cascader>
+			<el-form-item label="父路径" prop="pid">
+				<el-cascader v-model="form.pid" :options="dic" :props="dicProps" :show-all-levels="false" clearable></el-cascader>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -34,7 +34,7 @@
 					id:"",
 					name: "",
 					code: "",
-					parentId: ""
+					pid: ""
 				},
 				rules: {
 					code: [
@@ -90,7 +90,7 @@
 				this.form.id = data.id
 				this.form.name = data.name
 				this.form.code = data.code
-				this.form.parentId = data.parentId
+				this.form.pid = data.pid
 
 				//可以和上面一样单个注入，也可以像下面一样直接合并进去
 				//Object.assign(this.form, data)
