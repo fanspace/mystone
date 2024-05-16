@@ -129,6 +129,7 @@ import SIdentify from './sidentify'
 				//获取token
 				var user = await this.$API.auth.token.post(data)
 				if(user.success ){
+					console.log(user.data.token)
 					this.$TOOL.cookie.set("TOKEN", user.data.token, {
 						expires: this.form.autologin? 4*60*60 : 0
 					})
